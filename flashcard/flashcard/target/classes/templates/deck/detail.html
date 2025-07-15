@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi tiết bộ đề</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<h1>Chi tiết bộ đề</h1>
+<div th:if="${deck != null}">
+    <p><b>ID:</b> <span th:text="${deck.id}"></span></p>
+    <p><b>Tiêu đề:</b> <span th:text="${deck.title}"></span></p>
+    <p><b>Mô tả:</b> <span th:text="${deck.description}"></span></p>
+    <p><b>Môn học:</b> <span th:text="${deck.subject}"></span></p>
+    <p><b>Chủ sở hữu:</b> <span th:text="${deck.user != null ? deck.user.username : ''}"></span></p>
+    <p><b>Công khai:</b> <span th:text="${deck.isPublic ? 'Có' : 'Không'}"></span></p>
+    <p><b>Ngày tạo:</b> <span th:text="${#dates.format(deck.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
+</div>
+<a th:href="@{/decks}">Quay lại danh sách</a>
+</body>
+</html> 

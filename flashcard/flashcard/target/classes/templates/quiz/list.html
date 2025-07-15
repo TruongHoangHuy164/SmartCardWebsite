@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách quiz</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<h1>Danh sách quiz</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Người dùng</th>
+        <th>Bộ đề</th>
+        <th>Điểm</th>
+        <th>Số câu</th>
+        <th>Đúng</th>
+        <th>Ngày tạo</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="quiz : ${quizzes}">
+        <td th:text="${quiz.id}"></td>
+        <td th:text="${quiz.user != null ? quiz.user.username : ''}"></td>
+        <td th:text="${quiz.deck != null ? quiz.deck.title : ''}"></td>
+        <td th:text="${quiz.score}"></td>
+        <td th:text="${quiz.totalQuestions}"></td>
+        <td th:text="${quiz.correctAnswers}"></td>
+        <td th:text="${#dates.format(quiz.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html> 

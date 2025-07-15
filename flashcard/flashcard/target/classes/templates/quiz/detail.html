@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi tiết quiz</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<h1>Chi tiết quiz</h1>
+<div th:if="${quiz != null}">
+    <p><b>ID:</b> <span th:text="${quiz.id}"></span></p>
+    <p><b>Người dùng:</b> <span th:text="${quiz.user != null ? quiz.user.username : ''}"></span></p>
+    <p><b>Bộ đề:</b> <span th:text="${quiz.deck != null ? quiz.deck.title : ''}"></span></p>
+    <p><b>Điểm:</b> <span th:text="${quiz.score}"></span></p>
+    <p><b>Số câu:</b> <span th:text="${quiz.totalQuestions}"></span></p>
+    <p><b>Đúng:</b> <span th:text="${quiz.correctAnswers}"></span></p>
+    <p><b>Ngày tạo:</b> <span th:text="${#dates.format(quiz.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
+</div>
+<a th:href="@{/quizzes}">Quay lại danh sách</a>
+</body>
+</html> 

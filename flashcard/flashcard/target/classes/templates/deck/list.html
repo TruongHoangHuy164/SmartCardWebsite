@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách bộ đề</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div id="main-content">
+<h1>Danh sách bộ đề</h1>
+<div th:if="${toast}" th:text="${toast}" class="toast" style="opacity:1;pointer-events:auto;"></div>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Tiêu đề</th>
+        <th>Mô tả</th>
+        <th>Môn học</th>
+        <th>Chủ sở hữu</th>
+        <th>Công khai</th>
+        <th>Ngày tạo</th>
+        <th>Chi tiết</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="deck : ${decks}" th:classappend="${deck.id % 2 == 0} ? 'animated-row'">
+        <td th:text="${deck.id}"></td>
+        <td th:text="${deck.title}"></td>
+        <td th:text="${deck.description}"></td>
+        <td th:text="${deck.subject}"></td>
+        <td th:text="${deck.user != null ? deck.user.username : ''}"></td>
+        <td th:text="${deck.isPublic ? 'Có' : 'Không'}"></td>
+        <td th:text="${#dates.format(deck.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+        <td><a th:href="@{'/decks/detail/' + ${deck.id}}" class="animated">Xem</a></td>
+    </tr>
+    </tbody>
+</table>
+<a th:href="@{/decks/form}" class="animated"><button class="animated">Thêm bộ đề</button></a>
+</div>
+<script>
+window.onload = function() {
+    document.getElementById('main-content').classList.add('fade-in');
+    let toast = document.querySelector('.toast');
+    if (toast) {
+        setTimeout(() => { toast.classList.add('hide'); }, 2000);
+        setTimeout(() => { toast.remove(); }, 2600);
+    }
+}
+const forms = document.querySelectorAll('form');
+forms.forEach(f => f.addEventListener('submit', function() {
+    showLoading();
+}));
+</script>
+</body>
+</html> 

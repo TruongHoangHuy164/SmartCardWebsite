@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm/Sửa quiz</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<h1 th:text="${quiz != null} ? 'Sửa quiz' : 'Thêm quiz'"></h1>
+<form th:action="@{/quizzes/save}" th:object="${quiz}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <label>Điểm: <input type="number" th:field="*{score}" step="0.01" /></label><br/>
+    <label>Số câu: <input type="number" th:field="*{totalQuestions}" /></label><br/>
+    <label>Đúng: <input type="number" th:field="*{correctAnswers}" /></label><br/>
+    <button type="submit">Lưu</button>
+</form>
+<a th:href="@{/quizzes}">Quay lại danh sách</a>
+</body>
+</html> 

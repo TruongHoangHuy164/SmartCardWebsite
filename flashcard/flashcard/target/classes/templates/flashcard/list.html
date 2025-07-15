@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách flashcard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div id="main-content">
+<h1>Danh sách flashcard</h1>
+<div th:if="${toast}" th:text="${toast}" class="toast" style="opacity:1;pointer-events:auto;"></div>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Thuật ngữ</th>
+        <th>Định nghĩa</th>
+        <th>Bộ đề</th>
+        <th>Hình ảnh</th>
+        <th>Chi tiết</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="flashcard : ${flashcards}" th:classappend="${flashcard.id % 2 == 0} ? 'animated-row'">
+        <td th:text="${flashcard.id}"></td>
+        <td th:text="${flashcard.term}"></td>
+        <td th:text="${flashcard.definition}"></td>
+        <td th:text="${flashcard.deck != null ? flashcard.deck.title : ''}"></td>
+        <td><img th:src="${flashcard.imageUrl}" width="40" height="40" th:if="${flashcard.imageUrl != null}"/></td>
+        <td><a th:href="@{'/flashcards/detail/' + ${flashcard.id}}" class="animated">Xem</a></td>
+    </tr>
+    </tbody>
+</table>
+<a th:href="@{/flashcards/form}" class="animated"><button class="animated">Thêm flashcard</button></a>
+</div>
+<script>
+window.onload = function() {
+    document.getElementById('main-content').classList.add('fade-in');
+    let toast = document.querySelector('.toast');
+    if (toast) {
+        setTimeout(() => { toast.classList.add('hide'); }, 2000);
+        setTimeout(() => { toast.remove(); }, 2600);
+    }
+}
+const forms = document.querySelectorAll('form');
+forms.forEach(f => f.addEventListener('submit', function() {
+    showLoading();
+}));
+</script>
+</body>
+</html> 
