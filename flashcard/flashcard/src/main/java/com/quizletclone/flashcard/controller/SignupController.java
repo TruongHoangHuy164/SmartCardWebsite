@@ -1,12 +1,12 @@
-package com.quizletclone.flashcard.controller;
+// package com.quizletclone.flashcard.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+// import org.springframework.stereotype.Controller;
+// import org.springframework.web.bind.annotation.GetMapping;
 
-@Controller
-public class SignupController {
-    @GetMapping("/signup")
-    public String signupPage() {
-        return "login/signup";
-    }
-}
+// @Controller
+// public class SignupController {
+//     @GetMapping("/signup")
+//     public String signupPage() {
+//         return "login/signup";
+//     }
+// }

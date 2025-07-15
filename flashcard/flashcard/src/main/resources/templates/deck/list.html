@@ -95,7 +95,7 @@
 
         <div class="row g-4" th:if="${!#lists.isEmpty(decks)}">
             <div class="col-12 col-sm-6 col-lg-4" th:each="deck : ${decks}">
-                <div th:replace="decks/card :: deckCard(deck=${deck})"></div>
+                <div th:replace="deck/card :: deckCard(deck=${deck})"></div>
             </div>
         </div>
 

@@ -17,7 +17,15 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(Integer id) {
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public Optional<User> findById(Integer id) {
         return userRepository.findById(id);
     }
 
@@ -28,4 +36,4 @@ public class UserService {
     public void deleteUser(Integer id) {
         userRepository.deleteById(id);
     }
-} 
+}
