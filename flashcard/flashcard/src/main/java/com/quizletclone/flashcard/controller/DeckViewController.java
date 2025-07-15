@@ -30,7 +30,7 @@ public class DeckViewController {
     @GetMapping
     public String listDecks(Model model) {
         try {
-            List<Deck> decks = deckService.getAllDecks();
+            List<Deck> decks = deckService.getAllDecks(); // trả về List<Deck>
             model.addAttribute("decks", decks);
             return "deck/list";
         } catch (Exception e) {
