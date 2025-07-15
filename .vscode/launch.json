@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-FlashcardApplication<flashcard>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.quizletclone.flashcard.FlashcardApplication",
+            "projectName": "flashcard",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
