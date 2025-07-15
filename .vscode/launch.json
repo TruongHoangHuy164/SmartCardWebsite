@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "FlashcardApplication",
+            "request": "launch",
+            "mainClass": "com.quizletclone.flashcard.FlashcardApplication",
+            "projectName": ""
+        },
+        {
+            "type": "java",
             "name": "Spring Boot-FlashcardApplication<flashcard>",
             "request": "launch",
             "cwd": "${workspaceFolder}",

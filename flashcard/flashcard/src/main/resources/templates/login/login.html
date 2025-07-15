@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Log In - SmartCard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            background: #f5f6fa;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .login-left {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            color: #fff;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .login-left img {
+            width: 250px;
+            margin-bottom: 30px;
+        }
+
+        .login-left h2 {
+            font-weight: bold;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .login-right {
+            background: #fff;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .btn-login-social {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #aaa;
+        }
+
+        @media (max-width: 900px) {
+            .login-container {
+                flex-direction: column;
+            }
+
+            .login-left,
+            .login-right {
+                flex: unset;
+                width: 100%;
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <!-- Left side: Image + Slogan -->
+        <div class="login-left position-relative">
+            <a href="/" class="position-absolute top-0 start-0 m-3 text-white" style="z-index:10;font-size:1.7rem;">
+                <i class="fas fa-home"></i>
+            </a>
+            <!-- <img src="https://assets.quizlet.com/a/j/dist/app/i/og-image-v2.2b6b6b7b2b6b6b7b.png" alt="Books and Headphones"/> -->
+            <h2>Chinh phục mọi bộ thẻ, học mọi lúc mọi nơi.</h2>
+            <p style="font-size:1.2rem;">Cách học hiệu quả nhất. Đăng ký miễn phí ngay!</p>
+            <div style="position: absolute; bottom: 30px; left: 40px; font-weight: bold; font-size: 1.5rem;">SmartCard
+            </div>
+        </div>
+        <!-- Right side: Login Form -->
+        <div class="login-right">
+            <form class="login-form shadow p-4 rounded bg-white" th:action="@{/login}" method="post">
+                <h3 class="mb-4 text-center fw-bold">Đăng nhập</h3>
+                <button type="button" class="btn btn-outline-dark btn-login-social mb-2">
+                    <i class="fab fa-google me-2"></i> Đăng nhập với Google
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-login-social mb-2">
+                    <i class="fab fa-facebook me-2"></i> Đăng nhập với Facebook
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-login-social mb-2">
+                    <i class="fab fa-apple me-2"></i> Đăng nhập với Apple
+                </button>
+                <div class="divider">hoặc đăng nhập bằng email</div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email hoặc Tên đăng nhập</label>
+                    <input type="text" class="form-control" id="email" name="username"
+                        placeholder="Nhập email hoặc tên đăng nhập" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label d-flex justify-content-between">
+                        <span>Mật khẩu</span>
+                        <a href="#" class="small text-decoration-none">Quên mật khẩu?</a>
+                    </label>
+                    <input type="password" class="form-control" id="password" name="password"
+                        placeholder="Nhập mật khẩu" required>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe" name="remember-me">
+                    <label class="form-check-label" for="rememberMe">Ghi nhớ đăng nhập</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-2">Đăng nhập</button>
+                <div class="text-center">
+                    <span>Chưa có tài khoản? <a href="/signup">Đăng ký ngay</a></span>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

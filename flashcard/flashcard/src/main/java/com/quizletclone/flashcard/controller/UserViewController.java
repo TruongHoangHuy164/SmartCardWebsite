@@ -52,4 +52,5 @@ public class UserViewController {
         redirectAttributes.addFlashAttribute("toast", "Lưu người dùng thành công!");
         return "redirect:/users";
     }
+
 }

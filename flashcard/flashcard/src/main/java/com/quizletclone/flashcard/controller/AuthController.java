@@ -21,30 +21,30 @@ public class AuthController {
 
     private final UserService userService;
 
-    @GetMapping("/register")
+    @GetMapping("/signup")
     public String showRegisterForm(Model model) {
         model.addAttribute("user", new User());
-        return "auth/register";
+        return "login/signup";
     }
 
-    @PostMapping("/register")
+    @PostMapping("/signup")
     public String register(@ModelAttribute User user, Model model) {
         try {
             if (userService.findByUsername(user.getUsername()).isPresent()) {
                 model.addAttribute("error", "Tên đăng nhập đã tồn tại!");
-                return "auth/register";
+                return "login/signup";
             }
 
             if (userService.findByEmail(user.getEmail()).isPresent()) {
                 model.addAttribute("error", "Email đã tồn tại!");
-                return "auth/register";
+                return "login/signup";
             }
 
             userService.saveUser(user);
             return "redirect:/login?success=Đăng ký thành công! Vui lòng đăng nhập.";
         } catch (Exception e) {
             model.addAttribute("error", "Có lỗi xảy ra khi đăng ký: " + e.getMessage());
-            return "auth/register";
+            return "login/signup";
         }
     }
 
@@ -58,7 +58,7 @@ public class AuthController {
         if (error != null) {
             model.addAttribute("error", error);
         }
-        return "auth/login";
+        return "login/login";
     }
 
     @PostMapping("/login")
@@ -82,11 +82,11 @@ public class AuthController {
                 model.addAttribute("error", "Tên đăng nhập không tồn tại!");
             }
 
-            return "auth/login";
+            return "login/login";
 
         } catch (Exception e) {
             model.addAttribute("error", "Có lỗi xảy ra khi đăng nhập: " + e.getMessage());
-            return "auth/login";
+            return "login/login";
         }
     }
 
