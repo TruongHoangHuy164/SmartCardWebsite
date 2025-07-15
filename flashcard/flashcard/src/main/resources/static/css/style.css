@@ -1,0 +1,206 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f6f7fb;
+    margin: 0;
+    padding: 0;
+    color: #222;
+}
+
+h1 {
+    color: #4255ff;
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+}
+
+table {
+    width: 90%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(66,85,255,0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    font-size: 1rem;
+}
+
+thead {
+    background: #e4e8ff;
+}
+
+thead th {
+    padding: 16px 10px;
+    color: #4255ff;
+    font-weight: 600;
+    border-bottom: 2px solid #d1d7ee;
+}
+
+tbody td {
+    padding: 14px 10px;
+    border-bottom: 1px solid #f0f1f7;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+tbody tr:hover {
+    background: #f0f4ff;
+    transition: background 0.2s;
+}
+
+button, input[type="submit"] {
+    background: #4255ff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 22px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 2px 6px rgba(66,85,255,0.08);
+    transition: background 0.2s, transform 0.1s;
+}
+
+button:hover, input[type="submit"]:hover {
+    background: #2d3abf;
+    transform: translateY(-2px) scale(1.04);
+}
+
+label {
+    display: block;
+    margin: 12px 0 6px 0;
+    color: #4255ff;
+    font-weight: 500;
+}
+
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="datetime-local"] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #d1d7ee;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    background: #f9faff;
+    transition: border 0.2s;
+}
+
+input:focus {
+    border: 1.5px solid #4255ff;
+    outline: none;
+    background: #fff;
+}
+
+a {
+    color: #4255ff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: #2d3abf;
+    text-decoration: underline;
+}
+
+img {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(66,85,255,0.08);
+    transition: transform 0.2s;
+}
+
+img:hover {
+    transform: scale(1.08);
+}
+
+form {
+    width: 350px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 24px 28px 18px 28px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(66,85,255,0.10);
+}
+
+/* Fade-in animation for main content */
+.fade-in {
+    animation: fadeIn 0.7s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Loading spinner */
+.loading-spinner {
+    border: 4px solid #e4e8ff;
+    border-top: 4px solid #4255ff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 40px auto;
+    display: block;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Toast message */
+.toast {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: #4255ff;
+    color: #fff;
+    padding: 16px 28px;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(66,85,255,0.15);
+    font-size: 1.1rem;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999;
+    animation: toastIn 0.5s forwards;
+}
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.toast.hide {
+    animation: toastOut 0.5s forwards;
+}
+@keyframes toastOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-30px); }
+}
+
+/* Button pulse animation */
+button.animated, input[type="submit"].animated {
+    animation: pulse 1.2s infinite;
+}
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(66,85,255,0.2); }
+    70% { box-shadow: 0 0 0 10px rgba(66,85,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(66,85,255,0); }
+}
+
+/* Table row highlight animation */
+tbody tr.animated-row {
+    animation: rowHighlight 1s;
+}
+@keyframes rowHighlight {
+    from { background: #d1d7ee; }
+    to { background: #f0f4ff; }
+}
+
+@media (max-width: 600px) {
+    table, form {
+        width: 98%;
+        font-size: 0.95rem;
+    }
+    h1 {
+        font-size: 1.3rem;
+    }
+} 

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi tiết người dùng</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<h1>Chi tiết người dùng</h1>
+<div th:if="${user != null}">
+    <p><b>ID:</b> <span th:text="${user.id}"></span></p>
+    <p><b>Username:</b> <span th:text="${user.username}"></span></p>
+    <p><b>Email:</b> <span th:text="${user.email}"></span></p>
+    <p><b>Avatar:</b> <img th:src="${user.avatarUrl}" width="80" height="80" th:if="${user.avatarUrl != null}"/></p>
+    <p><b>Ngày tạo:</b> <span th:text="${#dates.format(user.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
+</div>
+<a th:href="@{/users}">Quay lại danh sách</a>
+</body>
+</html> 
