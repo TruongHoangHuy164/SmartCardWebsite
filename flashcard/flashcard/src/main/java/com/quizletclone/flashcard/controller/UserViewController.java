@@ -45,9 +45,12 @@ public class UserViewController {
     }
 
     @PostMapping("/save")
-    public String saveUser(@ModelAttribute("user") com.quizletclone.flashcard.model.User user, RedirectAttributes redirectAttributes) {
+    public String saveUser(@ModelAttribute("user") com.quizletclone.flashcard.model.User user,
+            RedirectAttributes redirectAttributes) {
         userService.saveUser(user);
         redirectAttributes.addFlashAttribute("toast", "Lưu người dùng thành công!");
         return "redirect:/users";
     }
-} 
+
+    
+}
