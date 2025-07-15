@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách bộ thẻ - Flashcard App</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -61,79 +61,79 @@
         </div>
 
         <!-- Search -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="fas fa-search"></i>
+        <div class="row align-items-center mb-4">
+            <!-- Ô tìm kiếm -->
+            <div class="col-lg-4 col-md-12 mb-2 mb-lg-0">
+                <div class="input-group shadow-sm">
+                    <span class="input-group-text bg-white">
+                        <i class="fas fa-search text-muted"></i>
                     </span>
-                    <input type="text" class="form-control search-box" placeholder="Tìm kiếm bộ thẻ...">
+                    <input type="text" id="searchInput" class="form-control search-box"
+                        placeholder="Tìm kiếm bộ thẻ...">
                 </div>
             </div>
-            <div class="col-md-6 text-md-end">
-                <select class="form-select d-inline-block w-auto" aria-label="Sắp xếp bộ thẻ">
-                    <option>Sắp xếp theo</option>
-                    <option>Tên A-Z</option>
-                    <option>Tên Z-A</option>
-                    <option>Mới nhất</option>
-                    <option>Cũ nhất</option>
+
+            <!-- Ô chọn môn học -->
+            <div class="col-lg-4 col-md-12 mb-2 mb-lg-0">
+                <select aria-label="Chọn theo môn" class="form-select shadow-sm" id="subjectSelect" name="subject">
+                    <option selected disabled>Chọn môn học</option>
+                    <option value="">Tất cả</option>
+                    <option value="Toán học">Toán học</option>
+                    <option value="Vật lý">Vật lý</option>
+                    <option value="Hóa học">Hóa học</option>
+                    <option value="Sinh học">Sinh học</option>
+                    <option value="Lịch sử">Lịch sử</option>
+                    <option value="Địa lý">Địa lý</option>
+                    <option value="Văn học">Văn học</option>
+                    <option value="Tiếng Anh">Tiếng Anh</option>
+                    <option value="Tiếng Việt">Tiếng Việt</option>
+                    <option value="Công nghệ">Công nghệ</option>
+                    <option value="Khác">Khác</option>
+                </select>
+            </div>
+
+            <!-- Ô sắp xếp -->
+            <div class="col-lg-4 col-md-12 text-lg-end">
+                <select id="sortSelect" class="form-select w-auto d-inline-block shadow-sm" aria-label="Sắp xếp bộ thẻ">
+                    <option selected disabled>Sắp xếp theo</option>
+                    <option value="az">Tên A-Z</option>
+                    <option value="za">Tên Z-A</option>
+                    <option value="newest">Mới nhất</option>
+                    <option value="oldest">Cũ nhất</option>
                 </select>
             </div>
         </div>
 
-        <!-- Deck List -->
-        <div class="row" th:if="${#lists.isEmpty(decks)}">
-            <div class="col-12 text-center py-5">
-                <i class="fas fa-layer-group fa-4x text-muted mb-3"></i>
-                <h4 class="text-muted">Chưa có bộ thẻ nào</h4>
-                <p class="text-muted">Bắt đầu tạo bộ thẻ đầu tiên của bạn</p>
-                <a href="/decks/create" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Tạo bộ thẻ đầu tiên
-                </a>
-            </div>
+        <div id="loadingIndicator" class="text-center text-muted my-3" style="display: none;">
+            <div class="spinner-border text-primary" role="status"></div>
+            <div class="mt-2">Đang tải dữ liệu...</div>
         </div>
 
-        <div class="row g-4" th:if="${!#lists.isEmpty(decks)}">
-            <div class="col-12 col-sm-6 col-lg-4" th:each="deck : ${decks}">
-                <div th:replace="deck/card :: deckCard(deck=${deck})"></div>
+        <!-- Deck List -->
+        <div id="deckListContainer" th:fragment="deckList">
+            <!-- Khi có deck -->
+            <div class="row g-4" th:if="${!#lists.isEmpty(decks)}">
+                <div class="col-12 col-sm-6 col-lg-4" th:each="deck : ${decks}">
+                    <div th:replace="deck/card :: deckCard(deck=${deck})"></div>
+                </div>
+            </div>
+
+            <!-- Khi KHÔNG có deck -->
+            <div class="row" th:if="${#lists.isEmpty(decks)}">
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-layer-group fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">Không tìm thấy bộ thẻ</h4>
+                    <p class="text-muted">Bắt đầu tạo bộ thẻ đầu tiên của bạn</p>
+                    <a id="createDeckLink" href="/decks/create?" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Tạo bộ thẻ đầu tiên
+                    </a>
+                </div>
             </div>
         </div>
 
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Alert logic -->
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        let successMsg = /*[[${success}]]*/ null;
-        let errorMsg = /*[[${error}]]*/ null;
-
-        if (successMsg !== null) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Thành công',
-                text: successMsg,
-                confirmButtonColor: '#667eea'
-            }).then(() => {
-                window.history.replaceState(null, '', window.location.pathname);
-            });
-        }
-
-        if (errorMsg !== null) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Lỗi',
-                text: errorMsg,
-                confirmButtonColor: '#dc3545'
-            }).then(() => {
-                window.history.replaceState(null, '', window.location.pathname);
-            });
-        }
-        /*]]>*/
-    </script>
 
 </body>
 
