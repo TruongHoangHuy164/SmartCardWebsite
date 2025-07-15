@@ -21,6 +21,10 @@ public class FlashcardService {
         return flashcardRepository.findById(id);
     }
 
+    public long getFlashcardCountByDeckId(Integer deckId) {
+        return flashcardRepository.countByDeckId(deckId);
+    }
+
     public Flashcard saveFlashcard(Flashcard flashcard) {
         return flashcardRepository.save(flashcard);
     }
@@ -28,4 +32,4 @@ public class FlashcardService {
     public void deleteFlashcard(Integer id) {
         flashcardRepository.deleteById(id);
     }
-} 
+}
