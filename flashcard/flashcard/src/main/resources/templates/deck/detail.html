@@ -90,6 +90,9 @@
                     </div>
                     <div class="col-md-4 text-md-end">
                         <div class="d-flex gap-2 justify-content-md-end">
+                            <a th:href="@{/study/deck/{id}(id=${deck.id})}" class="btn btn-primary">
+                                <i class="fas fa-play me-2"></i>Học ngay
+                            </a>
                             <a th:href="@{/flashcards/create(deckId=${deck.id})}" class="btn btn-outline-light">
                                 <i class="fas fa-plus me-2"></i>Thêm thẻ
                             </a>
@@ -102,7 +105,7 @@
             </div>
         </section>
 
-        <div class="container mt-4">    
+        <div class="container mt-4">
 
             <!-- Card List -->
             <div id="cardList">

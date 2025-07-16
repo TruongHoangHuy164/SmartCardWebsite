@@ -22,6 +22,10 @@ public class FlashcardService {
         return flashcardRepository.findById(id);
     }
 
+    public List<Flashcard> getFlashcardsByDeckId(Integer deckId) {
+        return flashcardRepository.findByDeckId(deckId);
+    }
+
     public long getFlashcardCountByDeckId(Integer deckId) {
         return flashcardRepository.countByDeckId(deckId);
     }
