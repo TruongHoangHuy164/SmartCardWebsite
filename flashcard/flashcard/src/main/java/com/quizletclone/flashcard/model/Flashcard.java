@@ -1,5 +1,7 @@
 package com.quizletclone.flashcard.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,8 +23,9 @@ public class Flashcard {
 
     @ManyToOne
     @JoinColumn(name = "deck_id")
+    @JsonIgnore
     private Deck deck;
 
     @Column(name = "image_url")
     private String imageUrl;
-} 
+}

@@ -1,5 +1,6 @@
 package com.quizletclone.flashcard.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.quizletclone.flashcard.model.Deck;
@@ -39,6 +41,16 @@ public class DeckViewController {
         }
     }
 
+    @GetMapping("/search")
+    public String searchDecks(@RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String sub,
+            Model model) {
+        List<Deck> decks = deckService.searchAndSortDecks(keyword, sort, sub);
+        model.addAttribute("decks", decks);
+        return "deck/list :: deckList"; // ⚠️ chỉ trả về fragment
+    }
+
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("deck", new Deck());
@@ -52,6 +64,7 @@ public class DeckViewController {
             if (userOpt.isPresent()) {
                 deck.setUser(userOpt.get());
                 deck.setIsPublic(true);
+                deck.setCreatedAt(new Date());
                 deckService.saveDeck(deck);
                 return redirectWithMessage("/decks", redirectAttributes, "success", "Bộ thẻ đã được tạo thành công!");
             } else {
