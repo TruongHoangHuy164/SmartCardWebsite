@@ -33,22 +33,25 @@
             <!-- Thanh tiến trình -->
             <div class="mt-4">
                 <div class="progress">
-                    <divdiv id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 0%"
+                    <div id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 0%"
                         aria-label="Tiến trình học flashcard">
+                    </div>
                 </div>
+                <p class="text-center mt-2" id="progressText">0 / 0</p>
             </div>
-            <p class="text-center mt-2" id="progressText">0 / 0</p>
-        </div>
 
-        <div class="text-center mt-4">
-            <button class="btn btn-primary" id="nextBtn">Tiếp theo <i class="bi bi-arrow-right"></i></button>
+            <div class="text-center mt-4">
+                <button class="btn btn-primary" id="nextBtn">Tiếp theo <i class="bi bi-arrow-right"></i></button>
+                <button id="finishBtn" class="btn btn-success d-none mt-3">Hoàn thành <i
+                        class="bi bi-sticky"></i></button>
+            </div>
         </div>
-    </div>
     </div>
 
     <!-- Flashcards từ Thymeleaf -->
     <script th:inline="javascript">
-        let flashcards = /*[[${flashcards != null ? flashcards : '[]'}]]*/[];
+        let quizQuestions = /*[[${quizQuestionsJson}]]*/[];
+        const quizId = /*[[${quizId}]]*/ 0;
     </script>
 
     <!-- Script Bootstrap + Custom -->

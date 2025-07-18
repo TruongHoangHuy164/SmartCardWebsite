@@ -1,7 +1,9 @@
 package com.quizletclone.flashcard.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Controller;
@@ -17,9 +19,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.quizletclone.flashcard.model.Deck;
 import com.quizletclone.flashcard.model.User;
 import com.quizletclone.flashcard.service.DeckService;
+import com.quizletclone.flashcard.service.QuizQuestionService;
+import com.quizletclone.flashcard.service.QuizService;
 import com.quizletclone.flashcard.service.UserService;
 import static com.quizletclone.flashcard.util.UrlHelper.redirectWithMessage;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -28,12 +33,40 @@ import lombok.RequiredArgsConstructor;
 public class DeckViewController {
     private final DeckService deckService;
     private final UserService userService;
+    private final QuizService quizService;
+    private final QuizQuestionService quizQuestionService;
 
     @GetMapping
-    public String listDecks(Model model) {
+    public String listDecks(Model model, HttpSession session) {
         try {
-            List<Deck> decks = deckService.getAllDecks(); // trả về List<Deck>
+            List<Deck> decks = deckService.getAllDecks();
             model.addAttribute("decks", decks);
+
+            User user = (User) session.getAttribute("loggedInUser");
+
+            Map<Integer, Integer> totalQuestionsMap = new HashMap<>();
+            Map<Integer, Integer> recentCorrectCountMap = new HashMap<>();
+            Map<Integer, Integer> needReviewMap = new HashMap<>(); // ⬅ Thêm map này
+
+            for (Deck deck : decks) {
+                int totalQuestions = quizQuestionService.countByDeckId(deck.getId());
+                totalQuestionsMap.put(deck.getId(), totalQuestions);
+
+                int correctCount = 0;
+
+                if (user != null) {
+                    correctCount = quizService.getCorrectAnswersFromLatestQuiz(user.getId(), deck.getId());
+                    recentCorrectCountMap.put(deck.getId(), correctCount);
+                }
+
+                recentCorrectCountMap.put(deck.getId(), correctCount);
+                needReviewMap.put(deck.getId(), totalQuestions - correctCount); // ⬅ Tính luôn ở đây
+            }
+
+            model.addAttribute("totalQuestionsMap", totalQuestionsMap);
+            model.addAttribute("recentCorrectCountMap", recentCorrectCountMap);
+            model.addAttribute("needReviewMap", needReviewMap); // ⬅ Đưa vào model
+
             return "deck/list";
         } catch (Exception e) {
             model.addAttribute("error", "Có lỗi xảy ra khi tải danh sách bộ thẻ: " + e.getMessage());
@@ -45,9 +78,35 @@ public class DeckViewController {
     public String searchDecks(@RequestParam(required = false) String keyword,
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) String sub,
-            Model model) {
+            Model model, HttpSession session) {
         List<Deck> decks = deckService.searchAndSortDecks(keyword, sort, sub);
         model.addAttribute("decks", decks);
+
+        User user = (User) session.getAttribute("loggedInUser");
+
+        Map<Integer, Integer> totalQuestionsMap = new HashMap<>();
+        Map<Integer, Integer> recentCorrectCountMap = new HashMap<>();
+        Map<Integer, Integer> needReviewMap = new HashMap<>(); // ⬅ Thêm map này
+
+        for (Deck deck : decks) {
+            int totalQuestions = quizQuestionService.countByDeckId(deck.getId());
+            totalQuestionsMap.put(deck.getId(), totalQuestions);
+
+            int correctCount = 0;
+
+            if (user != null) {
+                correctCount = quizService.getCorrectAnswersFromLatestQuiz(user.getId(), deck.getId());
+                recentCorrectCountMap.put(deck.getId(), correctCount);
+            }
+
+            recentCorrectCountMap.put(deck.getId(), correctCount);
+            needReviewMap.put(deck.getId(), totalQuestions - correctCount); // ⬅ Tính luôn ở đây
+        }
+
+        model.addAttribute("totalQuestionsMap", totalQuestionsMap);
+        model.addAttribute("recentCorrectCountMap", recentCorrectCountMap);
+        model.addAttribute("needReviewMap", needReviewMap); // ⬅ Đưa vào model
+
         return "deck/list :: deckList"; // ⚠️ chỉ trả về fragment
     }
 

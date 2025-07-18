@@ -3,8 +3,15 @@
     <div class="flashcard shadow-lg rounded-4" onclick="this.classList.toggle('flipped')">
         <div class="flashcard-inner">
             <div class="flashcard-front">
+                <!-- Ảnh nếu có -->
+                <div th:if="${card.imageUrl != null}" class="mb-2 text-center">
+                    <img th:src="@{${card.imageUrl}}" alt="Flashcard Image" class="img-fluid"
+                        style="max-height: 200px;" />
+                </div>
+                <!-- Thuật ngữ -->
                 <h5 th:text="${card.term}">Thuật ngữ</h5>
             </div>
+
             <div class="flashcard-back">
                 <p th:text="${card.definition}">Định nghĩa</p>
             </div>
