@@ -15,7 +15,7 @@
         <h2 class="mb-4">✏️ Chỉnh sửa Flashcard</h2>
 
         <form th:action="@{'/flashcards/edit/' + ${flashcard.id}}" th:object="${flashcard}" method="post"
-            class="needs-validation" novalidate>
+            class="needs-validation" novalidate  enctype="multipart/form-data">
             <!-- hidden để giữ deck.id -->
             <input type="hidden" th:field="*{deck.id}" />
 
@@ -32,9 +32,8 @@
             </div>
 
             <div class="mb-3">
-                <label for="imageUrl" class="form-label">URL hình ảnh</label>
-                <input type="text" id="imageUrl" name="imageUrl" th:field="*{imageUrl}" class="form-control"
-                    placeholder="Nhập URL hình ảnh">
+                <label for="imageFile" class="form-label">Chọn hình ảnh</label>
+                <input type="file" id="imageFile" name="imageFile" class="form-control" accept="image/*">
             </div>
 
             <button type="submit" class="btn btn-primary">💾 Cập nhật</button>

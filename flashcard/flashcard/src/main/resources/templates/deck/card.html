@@ -37,11 +37,11 @@
                 </div>
                 <div class="col-4">
                     <small class="text-muted">Đã học</small>
-                    <div class="fw-bold text-success">0</div>
+                    <div class="fw-bold text-success" th:text="${recentCorrectCountMap[deck.id]}">0</div>
                 </div>
                 <div class="col-4">
                     <small class="text-muted">Cần ôn</small>
-                    <div class="fw-bold text-warning">0</div>
+                    <div class="fw-bold text-warning" th:text="${needReviewMap[deck.id]}">0</div>
                 </div>
             </div>
 

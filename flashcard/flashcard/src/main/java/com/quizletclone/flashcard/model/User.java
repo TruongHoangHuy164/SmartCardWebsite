@@ -1,9 +1,15 @@
 package com.quizletclone.flashcard.model;
 
-import jakarta.persistence.*;
+import java.util.Date;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -14,6 +20,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String username;
 
     private String email;
@@ -25,4 +32,4 @@ public class User {
 
     @Column(name = "created_at")
     private Date createdAt;
-} 
+}

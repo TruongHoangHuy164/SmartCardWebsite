@@ -1,6 +1,15 @@
 package com.quizletclone.flashcard.model;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,11 +23,12 @@ public class QuizQuestion {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "quiz_id")
+    @JoinColumn(name = "quiz_id", nullable = false)
+    @JsonIgnore
     private Quiz quiz;
 
     @ManyToOne
-    @JoinColumn(name = "flashcard_id")
+    @JoinColumn(name = "flashcard_id", nullable = false)
     private Flashcard flashcard;
 
     @Column(name = "question_text", columnDefinition = "NVARCHAR(MAX)")
@@ -26,10 +36,4 @@ public class QuizQuestion {
 
     @Column(name = "correct_answer", columnDefinition = "NVARCHAR(MAX)")
     private String correctAnswer;
-
-    @Column(name = "user_answer", columnDefinition = "NVARCHAR(MAX)")
-    private String userAnswer;
-
-    @Column(name = "is_correct")
-    private Boolean isCorrect;
-} 
+}
