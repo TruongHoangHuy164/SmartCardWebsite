@@ -29,4 +29,5 @@ Thumbs.db
 .env
 
 # Spring Boot config
-application.properties
+src/main/resources/application.properties
+
