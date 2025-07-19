@@ -27,3 +27,6 @@ Thumbs.db
 
 # Environment variables
 .env
+
+# Spring Boot config
+application.properties
