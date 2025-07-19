@@ -29,7 +29,7 @@
                     <td th:text="${qq.questionText}"></td>
                     <td th:text="${qq.correctAnswer}"></td>
                     <td>
-                        <a class="btn btn-primary" th:href="@{/quiz-questions/add/{id}(id=${qq.flashcard.id})}">
+                        <a class="btn btn-primary" th:href="@{/quiz-questions/add/flashcard/{id}(id=${qq.flashcard.id})}">
                             ➕ Thêm câu hỏi
                         </a>
                     </td>

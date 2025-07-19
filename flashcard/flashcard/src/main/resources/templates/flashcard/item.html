@@ -2,22 +2,34 @@
 <div th:fragment="flashcardItem(card)">
     <div class="flashcard shadow-lg rounded-4 position-relative" onmouseenter="this.classList.add('hovered')"
         onmouseleave="this.classList.remove('hovered')" onclick="this.classList.toggle('flipped')">
+
         <div class="flashcard-inner position-relative">
 
-            <!-- Thanh navbar nhỏ -->
-            <div class="flashcard-toolbar position-absolute top-0 end-0 m-2 d-none"
-                th:if="${session.loggedInUser != null && session.loggedInUser.id == card.deck.user.id}">
-                <div class="btn-group-vertical">
-                    <a class="btn btn-sm btn-outline-secondary" th:href="@{'/flashcards/edit/' + ${card.id}}"
-                        onclick="event.stopPropagation();">
-                        <i class="fas fa-edit"></i> Sửa
+            <!-- Thanh navbar nhỏ bên phải -->
+            <div class="flashcard-toolbar position-absolute top-0 end-0 pe-0 d-none"
+                th:if="${session.loggedInUser != null && session.loggedInUser.id == card.deck.user.id}"
+                onclick="event.stopPropagation();">
+                <div class="btn-group-vertical w-100 align-items-end" style="gap: 5px;">
+                    <!-- Nút sửa -->
+                    <a class="btn btn-outline-primary d-flex align-items-center justify-content-end gap-2 btn-sm text-end"
+                        th:href="@{'/flashcards/edit/' + ${card.id}}" onclick="event.stopPropagation();">
+                        <i class="fas fa-edit"></i> Cập nhật
                     </a>
+
+                    <!-- Nút xoá -->
                     <form th:action="@{'/flashcards/delete/' + ${card.id}}" method="post"
                         onsubmit="event.stopPropagation(); return confirm('Bạn có chắc muốn xóa thẻ này?');">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <button type="submit"
+                            class="btn btn-outline-danger d-flex align-items-center justify-content-end gap-2 btn-sm w-100 text-end">
                             <i class="fas fa-trash-alt"></i> Xoá
                         </button>
                     </form>
+
+                    <!-- Nút thêm câu hỏi -->
+                    <a class="btn btn-outline-success d-flex align-items-center justify-content-end gap-2 btn-sm w-100 text-end"
+                        th:href="@{/quiz-questions/add/flashcard/{id}(id=${card.id})}">
+                        <i class="fas fa-plus-circle"></i> Thêm câu hỏi
+                    </a>
                 </div>
             </div>
 

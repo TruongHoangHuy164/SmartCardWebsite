@@ -65,7 +65,7 @@ public class QuizQuestionViewController {
     }
 
     // Form thêm mới
-    @GetMapping("/add/{id}")
+    @GetMapping("/add/flashcard/{id}")
     public String showAddForm(@PathVariable("id") Integer flashcardId, Model model) {
         Optional<Flashcard> optional = flashcardRepository.findById(flashcardId);
         if (optional.isEmpty()) {
@@ -76,7 +76,7 @@ public class QuizQuestionViewController {
 
         // Gợi ý từ AI
         String prompt = "Tạo 1 câu hỏi trắc nghiệm bằng dựa trên thuật ngữ '" + flashcard.getTerm() +
-                "' và định nghĩa: '" + flashcard.getDefinition() +
+                "' hoặc định nghĩa: '" + flashcard.getDefinition() +
                 "'. Hãy trả lời bằng tiếng Việt dưới dạng JSON: {\"questionText\": \"...\", \"correctAnswer\": \"...\"}";
 
         String aiResponseJson = openAiService.ask(prompt); // bạn cần viết hàm này
