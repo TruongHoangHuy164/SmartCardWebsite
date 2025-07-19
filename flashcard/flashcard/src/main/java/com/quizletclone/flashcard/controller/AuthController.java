@@ -28,7 +28,8 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String register(@ModelAttribute User user, Model model) {
+    public String register(@ModelAttribute User user, Model model, HttpSession session,
+            RedirectAttributes redirectAttributes) {
         try {
             if (userService.findByUsername(user.getUsername()).isPresent()) {
                 model.addAttribute("error", "Tên đăng nhập đã tồn tại!");
@@ -41,7 +42,9 @@ public class AuthController {
             }
 
             userService.saveUser(user);
-            return "redirect:/login?success=Đăng ký thành công! Vui lòng đăng nhập.";
+            // Tự động đăng nhập sau khi đăng ký
+            session.setAttribute("loggedInUser", user);
+            return redirectWithMessage("/", redirectAttributes, "success", "Đăng ký và đăng nhập thành công!");
         } catch (Exception e) {
             model.addAttribute("error", "Có lỗi xảy ra khi đăng ký: " + e.getMessage());
             return "login/signup";
@@ -74,7 +77,7 @@ public class AuthController {
 
                 if (user.getPassword().equals(password)) {
                     session.setAttribute("loggedInUser", user); // Lưu session
-                    return redirectWithMessage("/decks", redirectAttributes, "success", "Đăng nhập thành công!");
+                    return redirectWithMessage("/", redirectAttributes, "success", "Đăng nhập thành công!");
                 } else {
                     model.addAttribute("error", "Mật khẩu không đúng!");
                 }

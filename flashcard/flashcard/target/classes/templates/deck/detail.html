@@ -90,11 +90,16 @@
                     </div>
                     <div class="col-md-4 text-md-end">
                         <div class="d-flex gap-2 justify-content-md-end">
+                            <div th:if="${session.loggedInUser != null and deck.user.id == session.loggedInUser.id}">
+                                <a th:href="@{/quiz-questions/deck/{id}(id=${deck.id})}" class="btn btn-info">
+                                    <i class="fas fa-list me-2"></i>danh sách câu hỏi
+                                </a>
+                                <a th:href="@{/flashcards/create(deckId=${deck.id})}" class="btn btn-outline-light">
+                                    <i class="fas fa-plus me-2"></i>Thêm thẻ
+                                </a>
+                            </div>
                             <a th:href="@{/study/deck/{id}(id=${deck.id})}" class="btn btn-primary">
                                 <i class="fas fa-play me-2"></i>Học ngay
-                            </a>
-                            <a th:href="@{/flashcards/create(deckId=${deck.id})}" class="btn btn-outline-light">
-                                <i class="fas fa-plus me-2"></i>Thêm thẻ
                             </a>
                             <a th:href="@{/decks}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Quay lại Decks
