@@ -9,7 +9,7 @@ import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
 
 public class ImageHelper {
-    private static final String BASE_UPLOAD_DIR = "flashcard/uploads";
+    private static final String BASE_UPLOAD_DIR = "flashcard/flashcard/uploads";
 
     public static String saveImage(MultipartFile imageFile, String folder) throws IOException {
         Path folderPath = Paths.get(BASE_UPLOAD_DIR, folder).toAbsolutePath();

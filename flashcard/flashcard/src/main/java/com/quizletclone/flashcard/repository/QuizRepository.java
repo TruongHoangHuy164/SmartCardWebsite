@@ -1,5 +1,6 @@
 package com.quizletclone.flashcard.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,6 @@ public interface QuizRepository extends JpaRepository<Quiz, Integer> {
 
     @Query("SELECT COUNT(qr) FROM QuizQuestion qr WHERE qr.quiz.deck.id = :deckId")
     int countQuestionsByDeckId(@Param("deckId") Integer deckId);
+
+    List<Quiz> findByUserId(Integer userId);
 }

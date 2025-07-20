@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Lấy đường dẫn tuyệt đối đến thư mục uploads/upload
-        String uploadPath = Paths.get("flashcard/uploads/upload").toAbsolutePath().toString();
+        String uploadPath = Paths.get("flashcard/flashcard/uploads/upload").toAbsolutePath().toString();
 
         registry.addResourceHandler("/images/**") // URL sẽ bắt đầu bằng /images/
                 .addResourceLocations("file:" + uploadPath + "/"); // ánh xạ tới thư mục thực

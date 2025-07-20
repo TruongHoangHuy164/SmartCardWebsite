@@ -41,5 +41,6 @@ public class Flashcard {
     private String imageUrl;
 
     @OneToMany(mappedBy = "flashcard", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<QuizQuestion> quizQuestions;
 }

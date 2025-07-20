@@ -22,7 +22,7 @@
             <tbody>
                 <tr th:each="deck : ${decks}">
                     <td th:text="${deck.id}"></td>
-                    <td th:text="${deck.name}"></td>
+                    <td th:text="${deck.title}"></td>
                     <td th:text="${deck.description}"></td>
                     <td th:text="${deck.user != null ? deck.user.username : 'N/A'}"></td>
                 </tr>

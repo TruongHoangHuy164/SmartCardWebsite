@@ -1,9 +1,9 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}">
+    layout:decorate="~{layout/layout}">
 
 <head>
     <title>Sửa câu hỏi quiz</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link th:href="@{/css/quiz_question.css}" rel="stylesheet">
 </head>
 
 <div layout:fragment="content" class="container mt-4">
@@ -11,22 +11,6 @@
 
     <form th:action="@{/quiz-questions/edit}" method="post" th:object="${quizQuestion}">
         <input type="hidden" th:field="*{id}" />
-
-        <div>
-            <label>Quiz:</label>
-            <select th:field="*{quiz}" required>
-                <option th:each="q : ${quizzes}" th:value="${q}" th:text="${q.name}"
-                        th:selected="${q.id == quizQuestion.quiz.id}"></option>
-            </select>
-        </div>
-
-        <div>
-            <label>Flashcard:</label>
-            <select th:field="*{flashcard}" required>
-                <option th:each="f : ${flashcards}" th:value="${f}" th:text="${f.term}"
-                        th:selected="${f.id == quizQuestion.flashcard.id}"></option>
-            </select>
-        </div>
 
         <div>
             <label>Câu hỏi:</label>

@@ -1,0 +1,42 @@
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch sử bài kiểm tra</title>
+    <link th:href="@{/css/quiz.css}" rel="stylesheet">
+</head>
+
+<body>
+    <div layout:fragment="content" class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Lịch sử bài kiểm tra</h2>
+            <a th:href="@{/decks}" class="btn btn-secondary">← Quay lại</a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" th:each="quiz : ${quizzes}">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${quiz.deck.title}">Tên bộ thẻ</h5>
+                        <p class="mb-1"><strong>Số câu đúng:</strong> <span th:text="${quiz.correctAnswers}">0</span>
+                        </p>
+                        <p class="mb-1"><strong>Tổng số câu:</strong> <span th:text="${quiz.totalQuestions}">0</span>
+                        </p>
+                        <p class="mb-1">
+                            <strong>Điểm:</strong>
+                            <span th:text="${#numbers.formatDecimal(quiz.score, 1, 2)}">0.00</span>
+                        </p>
+                        <p class="mb-0">
+                            <strong>Ngày làm:</strong>
+                            <span th:text="${#dates.format(quiz.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2025</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

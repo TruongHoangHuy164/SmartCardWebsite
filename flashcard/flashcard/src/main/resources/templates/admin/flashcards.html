@@ -22,7 +22,7 @@
             <tbody>
                 <tr th:each="flashcard : ${flashcards}">
                     <td th:text="${flashcard.id}"></td>
-                    <td th:text="${flashcard.question}"></td>
+                    <td th:text="${flashcard.quiz_questions.question_text}"></td>
                     <td th:text="${flashcard.answer}"></td>
                     <td th:text="${flashcard.deck != null ? flashcard.deck.name : 'N/A'}"></td>
                 </tr>

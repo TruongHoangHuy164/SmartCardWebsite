@@ -1,6 +1,5 @@
-// 
-
 package com.quizletclone.flashcard.controller;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +28,8 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String register(@ModelAttribute User user, @RequestParam(required = false) String confirmPassword, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String register(@ModelAttribute User user, @RequestParam(required = false) String confirmPassword,
+            Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         try {
             if (userService.findByUsername(user.getUsername()).isPresent()) {
                 model.addAttribute("error", "Tên đăng nhập đã tồn tại!");
@@ -83,7 +83,8 @@ public class AuthController {
                 if (user.getPassword().equals(password)) {
                     session.setAttribute("loggedInUser", user); // Lưu session
                     if (user.getRole() != null && "ADMIN".equals(user.getRole().getName())) {
-                        return redirectWithMessage("/admin", redirectAttributes, "success", "Đăng nhập admin thành công!");
+                        return redirectWithMessage("/admin", redirectAttributes, "success",
+                                "Đăng nhập admin thành công!");
                     } else {
                         return redirectWithMessage("/", redirectAttributes, "success", "Đăng nhập thành công!");
                     }

@@ -27,6 +27,13 @@ public class QuizViewController {
         return "quiz/list";
     }
 
+    @GetMapping("/user/{id}")
+    public String getUserQuizzes(@PathVariable("id") Integer id, Model model) {
+        List<Quiz> quizzes = quizService.getQuizzesByUserId(id);
+        model.addAttribute("quizzes", quizzes);
+        return "quiz/user-history"; // Trả về view Thymeleaf
+    }
+
     @GetMapping("/detail/{id}")
     public String quizDetail(@PathVariable Integer id, Model model) {
         quizService.getQuizById(id).ifPresent(quiz -> model.addAttribute("quiz", quiz));
@@ -48,4 +55,4 @@ public class QuizViewController {
         quizService.saveQuiz(quiz);
         return "redirect:/quizzes";
     }
-} 
+}

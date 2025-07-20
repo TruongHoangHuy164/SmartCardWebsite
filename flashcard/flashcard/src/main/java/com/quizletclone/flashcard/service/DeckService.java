@@ -46,9 +46,23 @@ public class DeckService {
         }
 
         if (sub != null && !sub.isEmpty()) {
-            result = result.stream()
-                    .filter(deck -> deck.getSubject().equalsIgnoreCase(sub))
-                    .collect(Collectors.toList());
+            if (sub.equalsIgnoreCase("Khác")) {
+                // Danh sách các môn học chuẩn
+                List<String> predefinedSubjects = List.of(
+                        "Toán học", "Vật lý", "Hóa học", "Sinh học",
+                        "Lịch sử", "Địa lý", "Văn học", "Tiếng Anh",
+                        "Tiếng Việt", "Công nghệ");
+
+                result = result.stream()
+                        .filter(deck -> !predefinedSubjects.contains(deck.getSubject()))
+                        .collect(Collectors.toList());
+            } else if (!sub.equalsIgnoreCase("Tất cả")) {
+                // Lọc theo môn cụ thể nếu không phải là "Tất cả"
+                result = result.stream()
+                        .filter(deck -> deck.getSubject().equalsIgnoreCase(sub))
+                        .collect(Collectors.toList());
+            }
+            // Nếu là "Tất cả" thì giữ nguyên không lọc theo subject
         }
 
         if (sort != null) {
@@ -73,9 +87,23 @@ public class DeckService {
         }
 
         if (sub != null && !sub.isEmpty()) {
-            result = result.stream()
-                    .filter(deck -> deck.getSubject().equalsIgnoreCase(sub))
-                    .collect(Collectors.toList());
+            if (sub.equalsIgnoreCase("Khác")) {
+                // Danh sách các môn học chuẩn
+                List<String> predefinedSubjects = List.of(
+                        "Toán học", "Vật lý", "Hóa học", "Sinh học",
+                        "Lịch sử", "Địa lý", "Văn học", "Tiếng Anh",
+                        "Tiếng Việt", "Công nghệ");
+
+                result = result.stream()
+                        .filter(deck -> !predefinedSubjects.contains(deck.getSubject()))
+                        .collect(Collectors.toList());
+            } else if (!sub.equalsIgnoreCase("Tất cả")) {
+                // Lọc theo môn cụ thể nếu không phải là "Tất cả"
+                result = result.stream()
+                        .filter(deck -> deck.getSubject().equalsIgnoreCase(sub))
+                        .collect(Collectors.toList());
+            }
+            // Nếu là "Tất cả" thì giữ nguyên không lọc theo subject
         }
 
         if (sort != null) {
