@@ -28,4 +28,4 @@ Thumbs.db
 # Environment variables
 .env
 
-src/main/resources/application.properties
+.src/main/resources/application.properties
