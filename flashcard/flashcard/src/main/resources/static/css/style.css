@@ -65,3 +65,15 @@ body {
 .alert {
     border-radius: 10px;
 }
+
+.flashcard.hovered .flashcard-toolbar {
+    display: block !important;
+}
+
+.flashcard-toolbar {
+    z-index: 2;
+}
+
+.flashcard-toolbar .btn {
+    padding: 0.25rem 0.5rem;
+}

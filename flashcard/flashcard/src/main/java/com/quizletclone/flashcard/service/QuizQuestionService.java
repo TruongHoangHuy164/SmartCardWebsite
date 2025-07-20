@@ -45,4 +45,18 @@ public class QuizQuestionService {
     public List<QuizQuestion> getQuestionsByQuizId(Integer quizId) {
         return quizQuestionRepository.findByQuizId(quizId);
     }
+
+    public QuizQuestion updateQuestion(Integer id, QuizQuestion updatedQuestion) {
+        return quizQuestionRepository.findById(id).map(question -> {
+            question.setFlashcard(updatedQuestion.getFlashcard());
+            question.setQuiz(updatedQuestion.getQuiz());
+            question.setQuestionText(updatedQuestion.getQuestionText());
+            question.setCorrectAnswer(updatedQuestion.getCorrectAnswer());
+            return quizQuestionRepository.save(question);
+        }).orElse(null);
+    }
+
+    public void deleteQuestion(Integer id) {
+        quizQuestionRepository.deleteById(id);
+    }
 }

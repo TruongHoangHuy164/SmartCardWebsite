@@ -23,7 +23,7 @@ public class QuizQuestion {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "quiz_id", nullable = false)
+    @JoinColumn(name = "quiz_id", nullable = true)
     @JsonIgnore
     private Quiz quiz;
 

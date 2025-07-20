@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm câu hỏi</title>
+</head>
+<body>
+<div layout:fragment="content" class="container mt-4">
+    <h2>Thêm câu hỏi trắc nghiệm</h2>
+    
+    <form th:action="@{/quiz-questions/save}" method="post">
+        <input type="hidden" th:name="flashcardId" th:value="${flashcard.id}" />
+
+        <div class="mb-3">
+            <label class="form-label">Thuật ngữ:</label>
+            <p class="form-control-plaintext" th:text="${flashcard.term}"></p>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Định nghĩa:</label>
+            <p class="form-control-plaintext" th:text="${flashcard.definition}"></p>
+        </div>
+
+        <div class="mb-3">
+            <label for="questionText" class="form-label">Câu hỏi</label>
+            <textarea class="form-control" id="questionText" name="questionText" rows="3"
+                      th:text="${suggestedQuestionText}"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="correctAnswer" class="form-label">Đáp án đúng</label>
+            <input type="text" class="form-control" id="correctAnswer" name="correctAnswer"
+                   th:value="${suggestedCorrectAnswer}" />
+        </div>
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">Lưu câu hỏi</button>
+            <a th:href="@{/deck/{id}}" class="btn btn-secondary">Quay lại</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

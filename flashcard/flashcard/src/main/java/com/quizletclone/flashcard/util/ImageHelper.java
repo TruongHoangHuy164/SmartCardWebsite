@@ -1,41 +1,49 @@
 package com.quizletclone.flashcard.util;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.*;
 import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;
 
 public class ImageHelper {
+    private static final String BASE_UPLOAD_DIR = "flashcard/uploads";
 
-    // Lưu ảnh vào thư mục ngang src: uploads/upload/
-    public static String saveImage(MultipartFile imageFile, String folderName) throws IOException {
-        String rootPath = Paths.get("flashcard/uploads", folderName).toAbsolutePath().toString();
+    public static String saveImage(MultipartFile imageFile, String folder) throws IOException {
+        Path folderPath = Paths.get(BASE_UPLOAD_DIR, folder).toAbsolutePath();
+        Files.createDirectories(folderPath);
 
-        File dir = new File(rootPath);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+        String filename = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+        Path destination = folderPath.resolve(filename);
 
-        String fileName = UUID.randomUUID() + "-" + imageFile.getOriginalFilename();
-        File dest = new File(dir, fileName);
-        imageFile.transferTo(dest);
+        imageFile.transferTo(destination.toFile());
 
-        // Trả về URL tương đối để truy cập ảnh
-        return "/images/" + fileName;
+        return "/images/" + filename;
     }
 
-    // Xóa ảnh đã lưu (không log ra console)
-    public static boolean deleteImage(String imageUrl, String folderName) {
+    public static String downloadImageFromUrl(String imageUrl, String folder) throws IOException {
+        Path folderPath = Paths.get(BASE_UPLOAD_DIR, folder).toAbsolutePath();
+        Files.createDirectories(folderPath);
+
+        String filename = UUID.randomUUID() + ".jpg";
+        Path destination = folderPath.resolve(filename);
+
+        try (InputStream in = new URL(imageUrl).openStream()) {
+            Files.copy(in, destination, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        return "/images/" + filename;
+    }
+
+    // Optional: Xóa ảnh cũ nếu cần
+    public static void deleteImage(String imageUrl, String folder) throws IOException {
         if (imageUrl == null || imageUrl.isEmpty())
-            return false;
+            return;
 
-        String fileName = Paths.get(imageUrl).getFileName().toString();
-        Path imagePath = Paths.get("flashcard/uploads", folderName, fileName).toAbsolutePath();
-        File file = imagePath.toFile();
-
-        return file.exists() && file.delete();
+        String filename = Paths.get(imageUrl).getFileName().toString();
+        Path filePath = Paths.get(BASE_UPLOAD_DIR, folder, filename).toAbsolutePath();
+        Files.deleteIfExists(filePath);
     }
 }

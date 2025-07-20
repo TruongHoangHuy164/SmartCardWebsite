@@ -21,7 +21,6 @@ import com.quizletclone.flashcard.model.User;
 import com.quizletclone.flashcard.service.DeckService;
 import com.quizletclone.flashcard.service.QuizQuestionService;
 import com.quizletclone.flashcard.service.QuizService;
-import com.quizletclone.flashcard.service.UserService;
 import static com.quizletclone.flashcard.util.UrlHelper.redirectWithMessage;
 
 import jakarta.servlet.http.HttpSession;
@@ -32,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DeckViewController {
     private final DeckService deckService;
-    private final UserService userService;
     private final QuizService quizService;
     private final QuizQuestionService quizQuestionService;
 
@@ -111,24 +109,33 @@ public class DeckViewController {
     }
 
     @GetMapping("/create")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(Model model, HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return redirectWithMessage("/login", redirectAttributes, "error", "Vui lòng đăng nhập để tạo bộ thẻ.");
+        }
         model.addAttribute("deck", new Deck());
         return "deck/add";
     }
 
     @PostMapping("/create")
-    public String createDeck(@ModelAttribute Deck deck, RedirectAttributes redirectAttributes) {
+    public String createDeck(@ModelAttribute Deck deck,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
         try {
-            Optional<User> userOpt = userService.findById(1); // Tạm thời dùng user cố định
-            if (userOpt.isPresent()) {
-                deck.setUser(userOpt.get());
-                deck.setIsPublic(true);
-                deck.setCreatedAt(new Date());
-                deckService.saveDeck(deck);
-                return redirectWithMessage("/decks", redirectAttributes, "success", "Bộ thẻ đã được tạo thành công!");
-            } else {
-                return redirectWithMessage("/decks", redirectAttributes, "error", "Không tìm thấy người dùng!");
+            User loggedInUser = (User) session.getAttribute("loggedInUser");
+            if (loggedInUser == null) {
+                return redirectWithMessage("/login", redirectAttributes, "error", "Vui lòng đăng nhập để tạo bộ thẻ.");
             }
+
+            if (deck.getIsPublic() == null) {
+                deck.setIsPublic(false);
+            }
+            deck.setUser(loggedInUser);
+            deck.setCreatedAt(new Date());
+            deckService.saveDeck(deck);
+            return redirectWithMessage("/decks", redirectAttributes, "success", "Bộ thẻ đã được tạo thành công!");
         } catch (Exception e) {
             return redirectWithMessage("/decks", redirectAttributes, "error",
                     "Có lỗi xảy ra khi tạo bộ thẻ: " + e.getMessage());
