@@ -20,6 +20,10 @@ public class DeckService {
         return deckRepository.findAll();
     }
 
+    public List<Deck> getPublicDecks() {
+        return deckRepository.findByIsPublicTrue();
+    }
+
     public Optional<Deck> getDeckById(Integer id) {
         return deckRepository.findById(id);
     }
@@ -34,6 +38,33 @@ public class DeckService {
 
     public List<Deck> searchAndSortDecks(String keyword, String sort, String sub) {
         List<Deck> result = deckRepository.findAll();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            result = result.stream()
+                    .filter(deck -> deck.getTitle().toLowerCase().contains(keyword.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if (sub != null && !sub.isEmpty()) {
+            result = result.stream()
+                    .filter(deck -> deck.getSubject().equalsIgnoreCase(sub))
+                    .collect(Collectors.toList());
+        }
+
+        if (sort != null) {
+            switch (sort) {
+                case "az" -> result.sort(Comparator.comparing(deck -> deck.getTitle().toLowerCase()));
+                case "za" -> result.sort(Comparator.comparing((Deck deck) -> deck.getTitle().toLowerCase()).reversed());
+                case "newest" -> result.sort(Comparator.comparing(Deck::getCreatedAt).reversed());
+                case "oldest" -> result.sort(Comparator.comparing(Deck::getCreatedAt));
+            }
+        }
+
+        return result;
+    }
+
+    public List<Deck> searchAndSortPublicDecks(String keyword, String sort, String sub) {
+        List<Deck> result = deckRepository.findByIsPublicTrue();
 
         if (keyword != null && !keyword.isEmpty()) {
             result = result.stream()

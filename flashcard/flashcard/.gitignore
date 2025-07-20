@@ -24,3 +24,10 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Environment variables
+.env
+
+# Spring Boot config
+src/main/resources/application.properties
+

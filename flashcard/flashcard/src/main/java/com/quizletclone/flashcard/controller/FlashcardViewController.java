@@ -30,7 +30,7 @@ public class FlashcardViewController {
     @Autowired
     private DeckRepository deckRepository;
 
-    // Form tạo flashcard mới
+    // 📝 Form tạo flashcard mới
     @GetMapping("/create")
     public String showCreateForm(@RequestParam("deckId") Integer deckId, Model model) {
         Deck deck = deckRepository.findById(deckId)
@@ -43,43 +43,44 @@ public class FlashcardViewController {
         return "flashcard/add";
     }
 
+    // ✅ Xử lý tạo mới flashcard
     @PostMapping("/create")
     public String createFlashcard(
             @ModelAttribute Flashcard flashcard,
             @RequestParam("deckId") Integer deckId,
-            @RequestParam(value = "imageFile", required = true) MultipartFile imageFile,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+            @RequestParam(value = "imageUrlFromUnsplash", required = false) String imageUrlFromUnsplash,
             RedirectAttributes redirectAttributes) {
 
-        // ✅ Tìm Deck
+        // ✅ Gán Deck cho flashcard
         Deck deck = deckRepository.findById(deckId)
                 .orElseThrow(() -> new IllegalArgumentException("Deck không tồn tại"));
         flashcard.setDeck(deck);
 
-        // ✅ Xử lý ảnh nếu có
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                String imageUrl = ImageHelper.saveImage(imageFile, "upload"); // lưu vào uploads/upload
-                flashcard.setImageUrl(imageUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
-                redirectAttributes.addFlashAttribute("error", "Không thể lưu ảnh: " + e.getMessage());
-                return "redirect:/decks/" + deckId;
-            }
-        }
-
-        // ✅ Lưu flashcard
         try {
+            // ✅ Nếu người dùng upload ảnh từ máy
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String imageUrl = ImageHelper.saveImage(imageFile, "upload");
+                flashcard.setImageUrl(imageUrl);
+            }
+            // ✅ Nếu chọn ảnh từ Unsplash
+            else if (imageUrlFromUnsplash != null && !imageUrlFromUnsplash.isEmpty()) {
+                String savedPath = ImageHelper.downloadImageFromUrl(imageUrlFromUnsplash, "upload");
+                flashcard.setImageUrl(savedPath);
+            }
+
+            // ✅ Lưu flashcard
             flashcardService.saveFlashcard(flashcard);
             redirectAttributes.addFlashAttribute("success", "Đã thêm thẻ thành công!");
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Thêm thẻ không thành công: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Không thể thêm thẻ: " + e.getMessage());
         }
 
         return "redirect:/decks/" + deckId;
     }
 
-    // Form chỉnh sửa flashcard
+    // ✏️ Form chỉnh sửa flashcard
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") Integer id, Model model) {
         Flashcard flashcard = flashcardService.getFlashcardById(id)
@@ -89,10 +90,11 @@ public class FlashcardViewController {
         return "flashcard/edit";
     }
 
+    // ✅ Cập nhật flashcard
     @PostMapping("/edit/{id}")
     public String updateFlashcard(@PathVariable("id") Integer id,
             @ModelAttribute("flashcard") Flashcard updatedCard,
-            @RequestParam("imageFile") MultipartFile imageFile,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
             RedirectAttributes redirectAttributes) {
         Flashcard existing = flashcardService.getFlashcardById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Flashcard không tồn tại"));
@@ -100,10 +102,9 @@ public class FlashcardViewController {
         existing.setTerm(updatedCard.getTerm());
         existing.setDefinition(updatedCard.getDefinition());
 
-        // ✅ Xử lý lưu ảnh nếu có file được chọn
         if (imageFile != null && !imageFile.isEmpty()) {
             try {
-                String imageUrl = ImageHelper.saveImage(imageFile, "upload"); // lưu vào thư mục uploads/upload
+                String imageUrl = ImageHelper.saveImage(imageFile, "upload");
                 existing.setImageUrl(imageUrl);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -117,20 +118,21 @@ public class FlashcardViewController {
         return "redirect:/decks/" + existing.getDeck().getId();
     }
 
+    // 🗑️ Xóa flashcard
     @PostMapping("/delete/{id}")
-    public String deleteFlashcard(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+    public String deleteFlashcard(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes)
+            throws IOException {
         Flashcard flashcard = flashcardService.getFlashcardById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Flashcard không tồn tại"));
 
         Integer deckId = flashcard.getDeck().getId();
 
-        // Xóa ảnh nếu có
-        String imageUrl = flashcard.getImageUrl();
-        ImageHelper.deleteImage(imageUrl, "upload"); // "upload" là tên thư mục bạn đang dùng
+        // ✅ Xóa ảnh nếu có
+        if (flashcard.getImageUrl() != null) {
+            ImageHelper.deleteImage(flashcard.getImageUrl(), "upload");
+        }
 
-        // Xóa flashcard
         flashcardService.deleteFlashcard(id);
-
         redirectAttributes.addFlashAttribute("success", "Đã xóa thẻ thành công!");
         return "redirect:/decks/" + deckId;
     }
