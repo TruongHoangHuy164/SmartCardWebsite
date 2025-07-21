@@ -14,10 +14,11 @@
         <div class="edit-form-wrapper">
             <h2 class="mb-4 text-center"><i class="fas fa-pen"></i> Chỉnh sửa Flashcard</h2>
 
-            <form th:action="@{'/flashcards/edit/' + ${flashcard.id}}" th:object="${flashcard}" method="post"
-                class="needs-validation" novalidate enctype="multipart/form-data">
-                <!-- hidden để giữ deck.id -->
-                <input type="hidden" th:field="*{deck.id}" />
+        <form th:action="@{'/flashcards/edit/' + ${flashcard.id}}" th:object="${flashcard}" method="post"
+            class="needs-validation" novalidate  enctype="multipart/form-data">
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            <!-- hidden để giữ deck.id -->
+            <input type="hidden" th:field="*{deck.id}" />
 
                 <div class="mb-3">
                     <label for="term" class="form-label">Từ khóa (Term)</label>

@@ -4,13 +4,12 @@ import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,7 +35,10 @@ public class User {
     @Column(name = "created_at")
     private Date createdAt;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @Column(name = "enabled")
+    private Boolean enabled = true;
+
+    @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
 }

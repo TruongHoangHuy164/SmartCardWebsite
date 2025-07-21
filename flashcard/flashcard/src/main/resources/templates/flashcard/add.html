@@ -16,10 +16,10 @@
             <i class="fas fa-plus-circle me-1"></i> Thêm Flashcard mới
         </h2>
 
-        <form th:action="@{/flashcards/create}" method="post" enctype="multipart/form-data" class="mx-auto"
-            style="max-width: 600px;">
-            <input type="hidden" name="deckId" th:value="${flashcard.deck.id}" />
-            <input type="hidden" name="imageUrlFromUnsplash" id="imageUrlFromUnsplash" />
+    <form th:action="@{/flashcards/create}" method="post" enctype="multipart/form-data">
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <input type="hidden" name="deckId" th:value="${flashcard.deck.id}" />
+        <input type="hidden" name="imageUrlFromUnsplash" id="imageUrlFromUnsplash" />
 
             <div class="mb-3">
                 <label for="term" class="form-label">

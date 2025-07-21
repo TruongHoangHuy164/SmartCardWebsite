@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.quizletclone.flashcard.model.Deck;
@@ -142,4 +144,15 @@ public class DeckService {
         return result;
     }
 
+    public Page<Deck> getDecks(String keyword, String subject, Pageable pageable) {
+        if (keyword != null && !keyword.isEmpty() && subject != null && !subject.isEmpty()) {
+            return deckRepository.findByTitleContainingIgnoreCaseAndSubjectIgnoreCase(keyword, subject, pageable);
+        } else if (keyword != null && !keyword.isEmpty()) {
+            return deckRepository.findByTitleContainingIgnoreCase(keyword, pageable);
+        } else if (subject != null && !subject.isEmpty()) {
+            return deckRepository.findBySubjectIgnoreCase(subject, pageable);
+        } else {
+            return deckRepository.findAll(pageable);
+        }
+    }
 }
