@@ -1,5 +1,6 @@
 package com.quizletclone.flashcard.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -9,12 +10,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.quizletclone.flashcard.model.Deck;
+import com.quizletclone.flashcard.model.User;
 import com.quizletclone.flashcard.repository.DeckRepository;
 
 @Service
 public class DeckService {
     @Autowired
     private DeckRepository deckRepository;
+
+    public List<Deck> getAllDecksSplit(User user) {
+        if (user != null) {
+            List<Deck> myDecks = deckRepository.findByUser(user);
+            List<Deck> otherDecks = deckRepository.findByUserNot(user);
+            List<Deck> all = new ArrayList<>();
+            all.addAll(myDecks);
+            all.addAll(otherDecks);
+            return all;
+        } else {
+            return deckRepository.findAll();
+        }
+    }
+
+    public List<Deck> getDecksByUser(User user) {
+        return deckRepository.findByUser(user);
+    }
+
+    // Lấy tất cả Deck không phải của user hiện tại
+    public List<Deck> getDecksNotByUser(User user) {
+        return deckRepository.findByUserNot(user);
+    }
 
     public List<Deck> getAllDecks() {
         return deckRepository.findAll();
