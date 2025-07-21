@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Làm bài thi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body,
+        .quizlet-attempt,
+        .quizlet-attempt * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+        }
+
+        .quizlet-attempt {
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 28px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+            padding: 48px 48px 36px 48px;
+        }
+
+        .quizlet-attempt .timer {
+            font-size: 24px;
+            color: #0071e3;
+            font-weight: 600;
+            margin-bottom: 32px;
+        }
+
+        .quizlet-attempt .question {
+            margin-bottom: 32px;
+            padding: 24px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .quizlet-attempt .options {
+            margin-top: 16px;
+        }
+
+        .quizlet-attempt .option {
+            display: block;
+            margin: 12px 0;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quizlet-attempt .option:hover {
+            border-color: #0071e3;
+            background: #f8f9fa;
+        }
+
+        .quizlet-attempt .option input[type="radio"] {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="quizlet-attempt">
+        <h2 th:text="${exam.title}"></h2>
+        <div class="timer">
+            <span id="timer"></span>
+        </div>
+        <form th:action="@{'/exams/attempt/' + ${attempt.id} + '/submit'}" method="post">
+            <div th:each="question, qStat : ${exam.questions}" class="question">
+                <h5 th:text="${qStat.count + '. ' + question.content}"></h5>
+                <div class="options">
+                    <label th:each="option : ${question.options}" class="option">
+                        <input type="radio" th:name="'answer_' + ${question.id}" th:value="${option.id}" required>
+                        <span th:text="${option.content}"></span>
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                Nộp bài
+            </button>
+        </form>
+    </div>
+
+    <script th:inline="javascript">
+        // Đếm ngược thời gian
+        const duration = /*[[${exam.duration}]]*/ 0;
+        let timeLeft = duration * 60;
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent =
+                `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+            if (timeLeft <= 0) {
+                document.querySelector('form').submit();
+            } else {
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            }
+        }
+
+        updateTimer();
+    </script>
+</body>
+
+</html>
