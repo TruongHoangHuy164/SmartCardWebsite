@@ -1,3 +1,4 @@
+<!-- deck/list -->
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorate="~{layout/layout}">
 
@@ -75,76 +76,77 @@
             </div>
         </div>
 
-        <!-- My Decks -->
-        <div class="mb-5">
-            <h4 class="mb-3">Bộ thẻ của tôi</h4>
-            <div class="row g-4" th:if="${#lists.isEmpty(pagedMyDecks)}">
-                <div class="col-12 text-center text-muted">
-                    Bạn chưa có bộ thẻ nào.
+        <div id="deckListContainer" th:fragment="deckCard">
+            <!-- My Decks -->
+            <div class="mb-5">
+                <h4 class="mb-3">Bộ thẻ của tôi</h4>
+                <div class="row g-4" th:if="${pagedMyDecks != null and pagedMyDecks.empty}">
+                    <div class="col-12 text-center text-muted">
+                        Bạn chưa có bộ thẻ nào.
+                    </div>
+                </div>
+                <div class="row g-4" th:if="${!#lists.isEmpty(pagedMyDecks)}">
+                    <div class="col-md-3" th:each="deck : ${pagedMyDecks}">
+                        <div th:replace="~{deck/card :: deckCard(deck=${deck})}"></div>
+                    </div>
+                </div>
+                <!-- Chỉ hiển thị phân trang nếu có ít nhất 1 bộ thẻ -->
+                <div th:if="${!pagedMyDecks.empty}" class="d-flex justify-content-center mt-3">
+                    <nav aria-label="MyDecks Pagination" class="mt-3">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${pageMy == 0} ? 'disabled'">
+                                <a class="page-link"
+                                    th:href="@{/decks(pageMy=${pageMy - 1}, pageOther=${pageOther})}">&laquo;</a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalMyPages - 1)}"
+                                th:classappend="${i == pageMy} ? 'active'">
+                                <a class="page-link" th:href="@{/decks(pageMy=${i}, pageOther=${pageOther})}"
+                                    th:text="${i + 1}">1</a>
+                            </li>
+                            <li class="page-item" th:classappend="${pageMy + 1 == totalMyPages} ? 'disabled'">
+                                <a class="page-link"
+                                    th:href="@{/decks(pageMy=${pageMy + 1}, pageOther=${pageOther})}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
-            <div class="row g-4" th:if="${!#lists.isEmpty(pagedMyDecks)}">
-                <div class="col-md-3" th:each="deck : ${pagedMyDecks}">
-                    <div th:replace="deck/card :: deckCard(deck=${deck})"></div>
+
+            <!-- Public Decks -->
+            <div>
+                <h4 class="mb-3">Bộ thẻ công khai</h4>
+                <div class="row g-4" th:if="${pagedOtherDecks != null and pagedOtherDecks.empty}">
+                    <div class="col-12 text-center text-muted">
+                        Không có bộ thẻ nào.
+                    </div>
                 </div>
-            </div>
-            <!-- Chỉ hiển thị phân trang nếu có ít nhất 1 bộ thẻ -->
-            <div th:if="${!pagedMyDecks.empty}" class="d-flex justify-content-center mt-3">
-                <nav aria-label="MyDecks Pagination" class="mt-3">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item" th:classappend="${pageMy == 0} ? 'disabled'">
-                            <a class="page-link"
-                                th:href="@{/decks(pageMy=${pageMy - 1}, pageOther=${pageOther})}">&laquo;</a>
-                        </li>
-                        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalMyPages - 1)}"
-                            th:classappend="${i == pageMy} ? 'active'">
-                            <a class="page-link" th:href="@{/decks(pageMy=${i}, pageOther=${pageOther})}"
-                                th:text="${i + 1}">1</a>
-                        </li>
-                        <li class="page-item" th:classappend="${pageMy + 1 == totalMyPages} ? 'disabled'">
-                            <a class="page-link"
-                                th:href="@{/decks(pageMy=${pageMy + 1}, pageOther=${pageOther})}">&raquo;</a>
-                        </li>
-                    </ul>
-                </nav>
+                <div class="row g-4" th:if="${!#lists.isEmpty(pagedOtherDecks)}">
+                    <div class="col-md-3" th:each="deck : ${pagedOtherDecks}">
+                        <div th:replace="~{deck/card :: deckCard(deck=${deck})}"></div>
+                    </div>
+                </div>
+                <!-- Chỉ hiển thị phân trang nếu có ít nhất 1 bộ thẻ công khai -->
+                <div th:if="${!pagedOtherDecks.empty}" class="d-flex justify-content-center mt-3">
+                    <nav aria-label="OtherDecks Pagination" class="mt-3">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${pageOther == 0} ? 'disabled'">
+                                <a class="page-link"
+                                    th:href="@{/decks(pageMy=${pageMy}, pageOther=${pageOther - 1})}">&laquo;</a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalOtherPages - 1)}"
+                                th:classappend="${i == pageOther} ? 'active'">
+                                <a class="page-link" th:href="@{/decks(pageMy=${pageMy}, pageOther=${i})}"
+                                    th:text="${i + 1}">1</a>
+                            </li>
+                            <li class="page-item" th:classappend="${pageOther + 1 == totalOtherPages} ? 'disabled'">
+                                <a class="page-link"
+                                    th:href="@{/decks(pageMy=${pageMy}, pageOther=${pageOther + 1})}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
-
-        <!-- Public Decks -->
-        <div>
-            <h4 class="mb-3">Bộ thẻ công khai</h4>
-            <div class="row g-4" th:if="${#lists.isEmpty(pagedOtherDecks)}">
-                <div class="col-12 text-center text-muted">
-                    Không có bộ thẻ công khai nào.
-                </div>
-            </div>
-            <div class="row g-4" th:if="${!#lists.isEmpty(pagedOtherDecks)}">
-                <div class="col-md-3" th:each="deck : ${pagedOtherDecks}">
-                    <div th:replace="deck/card :: deckCard(deck=${deck})"></div>
-                </div>
-            </div>
-            <!-- Chỉ hiển thị phân trang nếu có ít nhất 1 bộ thẻ công khai -->
-            <div th:if="${!pagedOtherDecks.empty}" class="d-flex justify-content-center mt-3">
-                <nav aria-label="OtherDecks Pagination" class="mt-3">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item" th:classappend="${pageOther == 0} ? 'disabled'">
-                            <a class="page-link"
-                                th:href="@{/decks(pageMy=${pageMy}, pageOther=${pageOther - 1})}">&laquo;</a>
-                        </li>
-                        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalOtherPages - 1)}"
-                            th:classappend="${i == pageOther} ? 'active'">
-                            <a class="page-link" th:href="@{/decks(pageMy=${pageMy}, pageOther=${i})}"
-                                th:text="${i + 1}">1</a>
-                        </li>
-                        <li class="page-item" th:classappend="${pageOther + 1 == totalOtherPages} ? 'disabled'">
-                            <a class="page-link"
-                                th:href="@{/decks(pageMy=${pageMy}, pageOther=${pageOther + 1})}">&raquo;</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-
     </div>
 </body>
 

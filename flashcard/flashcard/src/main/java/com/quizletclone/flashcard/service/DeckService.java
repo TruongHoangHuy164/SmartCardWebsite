@@ -103,6 +103,60 @@ public class DeckService {
         return result;
     }
 
+    public List<Deck> searchAndSortDecksByUser(User user, boolean ownedByUser, String keyword, String sort,
+            String sub) {
+        List<Deck> result = deckRepository.findAll();
+
+        // Lọc theo người sở hữu
+        if (ownedByUser) {
+            result = result.stream()
+                    .filter(deck -> deck.getUser().getId().equals(user.getId()))
+                    .collect(Collectors.toList());
+        } else {
+            result = result.stream()
+                    .filter(deck -> !deck.getUser().getId().equals(user.getId()))
+                    .collect(Collectors.toList());
+        }
+
+        // Lọc theo từ khóa
+        if (keyword != null && !keyword.isEmpty()) {
+            String lowerKeyword = keyword.toLowerCase();
+            result = result.stream()
+                    .filter(deck -> deck.getTitle().toLowerCase().contains(lowerKeyword))
+                    .collect(Collectors.toList());
+        }
+
+        // Lọc theo môn học
+        if (sub != null && !sub.isEmpty()) {
+            if (sub.equalsIgnoreCase("Khác")) {
+                List<String> predefinedSubjects = List.of(
+                        "Toán học", "Vật lý", "Hóa học", "Sinh học",
+                        "Lịch sử", "Địa lý", "Văn học", "Tiếng Anh",
+                        "Tiếng Việt", "Công nghệ");
+
+                result = result.stream()
+                        .filter(deck -> !predefinedSubjects.contains(deck.getSubject()))
+                        .collect(Collectors.toList());
+            } else if (!sub.equalsIgnoreCase("Tất cả")) {
+                result = result.stream()
+                        .filter(deck -> deck.getSubject().equalsIgnoreCase(sub))
+                        .collect(Collectors.toList());
+            }
+        }
+
+        // Sắp xếp
+        if (sort != null) {
+            switch (sort) {
+                case "az" -> result.sort(Comparator.comparing(deck -> deck.getTitle().toLowerCase()));
+                case "za" -> result.sort(Comparator.comparing((Deck deck) -> deck.getTitle().toLowerCase()).reversed());
+                case "newest" -> result.sort(Comparator.comparing(Deck::getCreatedAt).reversed());
+                case "oldest" -> result.sort(Comparator.comparing(Deck::getCreatedAt));
+            }
+        }
+
+        return result;
+    }
+
     public List<Deck> searchAndSortPublicDecks(String keyword, String sort, String sub) {
         List<Deck> result = deckRepository.findByIsPublicTrue();
 

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -110,44 +112,69 @@ public class DeckViewController {
     public String searchDecks(@RequestParam(required = false) String keyword,
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) String sub,
-            Model model, HttpSession session) {
-        User user = getLoggedInUser(session);
+            Model model, HttpSession session,
+            @RequestParam(defaultValue = "0") int pageMy,
+            @RequestParam(defaultValue = "0") int pageOther,
+            @RequestParam(defaultValue = "8") int size) {
+        try {
+            User user = getLoggedInUser(session);
+            List<Deck> myDecks = deckService.searchAndSortDecksByUser(user, true, keyword, sort, sub);
+            List<Deck> otherDecks = deckService.searchAndSortDecksByUser(user, false, keyword, sort, sub);
 
-        List<Deck> searchedDecks = deckService.searchAndSortDecks(keyword, sort, sub);
+            // Phân trang bộ thẻ của tôi
+            int totalMyPages = (int) Math.ceil((double) myDecks.size() / size);
+            int fromMy = Math.min(pageMy * size, myDecks.size());
+            int toMy = Math.min(fromMy + size, myDecks.size());
+            List<Deck> subMyDecks = myDecks.subList(fromMy, toMy);
+            Page<Deck> pagedMyDecks = new PageImpl<>(subMyDecks);
 
-        List<Deck> myDecks = new ArrayList<>();
-        List<Deck> otherDecks = new ArrayList<>();
+            // Phân trang bộ thẻ của người khác
+            int totalOtherPages = (int) Math.ceil((double) otherDecks.size() / size);
+            int fromOther = Math.min(pageOther * size, otherDecks.size());
+            int toOther = Math.min(fromOther + size, otherDecks.size());
+            List<Deck> subOtherDecks = otherDecks.subList(fromOther, toOther);
+            Page<Deck> pagedOtherDecks = new PageImpl<>(subOtherDecks);
 
-        for (Deck deck : searchedDecks) {
-            if (user != null && deck.getUser().getId().equals(user.getId())) {
-                myDecks.add(deck);
-            } else {
-                otherDecks.add(deck);
+            // Tạo map thống kê cho từng deck được hiển thị
+            Map<Integer, Integer> totalQuestionsMap = new HashMap<>();
+            Map<Integer, Integer> recentCorrectCountMap = new HashMap<>();
+            Map<Integer, Integer> needReviewMap = new HashMap<>();
+
+            for (Deck deck : pagedMyDecks) {
+                int total = quizQuestionService.countByDeckId(deck.getId());
+                int correct = user != null ? quizService.getCorrectAnswersFromLatestQuiz(user.getId(), deck.getId())
+                        : 0;
+                totalQuestionsMap.put(deck.getId(), total);
+                recentCorrectCountMap.put(deck.getId(), correct);
+                needReviewMap.put(deck.getId(), total - correct);
             }
+
+            for (Deck deck : pagedOtherDecks) {
+                int total = quizQuestionService.countByDeckId(deck.getId());
+                int correct = user != null ? quizService.getCorrectAnswersFromLatestQuiz(user.getId(), deck.getId())
+                        : 0;
+                totalQuestionsMap.put(deck.getId(), total);
+                recentCorrectCountMap.put(deck.getId(), correct);
+                needReviewMap.put(deck.getId(), total - correct);
+            }
+
+            model.addAttribute("pagedMyDecks", pagedMyDecks);
+            model.addAttribute("pagedOtherDecks", pagedOtherDecks);
+
+            model.addAttribute("pageMy", pageMy);
+            model.addAttribute("totalMyPages", totalMyPages);
+            model.addAttribute("pageOther", pageOther);
+            model.addAttribute("totalOtherPages", totalOtherPages);
+
+            model.addAttribute("totalQuestionsMap", totalQuestionsMap);
+            model.addAttribute("recentCorrectCountMap", recentCorrectCountMap);
+            model.addAttribute("needReviewMap", needReviewMap);
+
+            return "deck/list :: deckCard";
+        } catch (Exception e) {
+            model.addAttribute("error", "Lỗi khi tải danh sách bộ thẻ: " + e.getMessage());
+            return "deck/list";
         }
-
-        Map<Integer, Integer> totalQuestionsMap = new HashMap<>();
-        Map<Integer, Integer> recentCorrectCountMap = new HashMap<>();
-        Map<Integer, Integer> needReviewMap = new HashMap<>();
-
-        for (Deck deck : searchedDecks) {
-            int totalQuestions = quizQuestionService.countByDeckId(deck.getId());
-            int correctCount = user != null
-                    ? quizService.getCorrectAnswersFromLatestQuiz(user.getId(), deck.getId())
-                    : 0;
-
-            totalQuestionsMap.put(deck.getId(), totalQuestions);
-            recentCorrectCountMap.put(deck.getId(), correctCount);
-            needReviewMap.put(deck.getId(), totalQuestions - correctCount);
-        }
-
-        model.addAttribute("myDecks", myDecks);
-        model.addAttribute("otherDecks", otherDecks);
-        model.addAttribute("totalQuestionsMap", totalQuestionsMap);
-        model.addAttribute("recentCorrectCountMap", recentCorrectCountMap);
-        model.addAttribute("needReviewMap", needReviewMap);
-
-        return "deck/list :: deckList";
     }
 
     // ========================
