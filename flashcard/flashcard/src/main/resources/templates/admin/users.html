@@ -16,8 +16,9 @@
                     <th>ID</th>
                     <th>Tên đăng nhập</th>
                     <th>Email</th>
-                    <th>Role</th>
-                    <th>Ngày tạo</th>
+                    <th>Vai trò</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,8 +26,30 @@
                     <td th:text="${user.id}"></td>
                     <td th:text="${user.username}"></td>
                     <td th:text="${user.email}"></td>
-                    <td th:text="${user.role != null ? user.role.name : 'N/A'}"></td>
-                    <td th:text="${#dates.format(user.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td>
+                        <form th:action="@{/admin/users/change-role}" method="post" class="d-flex">
+                            <input type="hidden" name="userId" th:value="${user.id}">
+                            <select name="roleName" class="form-select form-select-sm me-2" onchange="this.form.submit()">
+                                <option th:each="roleEnum : ${T(com.quizletclone.flashcard.model.RoleName).values()}"
+                                        th:value="${roleEnum.name()}"
+                                        th:text="${roleEnum.name()}"
+                                        th:selected="${user.role != null and user.role.name == roleEnum.name()}">
+                                </option>
+                            </select>
+                        </form>
+                    </td>
+                    <td>
+                        <span th:text="${user.enabled != null && user.enabled} ? 'Hoạt động' : 'Đã khóa'"
+                              th:classappend="${user.enabled != null && user.enabled} ? 'text-success' : 'text-danger'"></span>
+                    </td>
+                    <td>
+                        <form th:action="@{/admin/users/toggle-lock}" method="post" class="d-inline">
+                            <input type="hidden" name="userId" th:value="${user.id}">
+                            <button type="submit" class="btn btn-sm"
+                                    th:classappend="${user.enabled != null && user.enabled} ? 'btn-warning' : 'btn-success'"
+                                    th:text="${user.enabled != null && user.enabled} ? 'Khóa' : 'Mở khóa'"></button>
+                        </form>
+                    </td>
                 </tr>
             </tbody>
         </table>

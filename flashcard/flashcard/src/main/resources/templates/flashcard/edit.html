@@ -16,6 +16,7 @@
 
         <form th:action="@{'/flashcards/edit/' + ${flashcard.id}}" th:object="${flashcard}" method="post"
             class="needs-validation" novalidate  enctype="multipart/form-data">
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
             <!-- hidden để giữ deck.id -->
             <input type="hidden" th:field="*{deck.id}" />
 

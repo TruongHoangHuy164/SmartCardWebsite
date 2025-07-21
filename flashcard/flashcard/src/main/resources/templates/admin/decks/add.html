@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm bộ thẻ mới - Quản trị</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card p-4">
+                    <h3 class="mb-3 text-center">Thêm bộ thẻ mới</h3>
+                    <form th:action="@{/admin/decks/add}" method="post" th:object="${deck}">
+                        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Tên bộ thẻ <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="title" th:field="*{title}" placeholder="Nhập tên bộ thẻ" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Mô tả</label>
+                            <textarea class="form-control" id="description" th:field="*{description}" rows="3" placeholder="Mô tả về bộ thẻ (tùy chọn)"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Môn học</label>
+                            <select class="form-select" id="subject" th:field="*{subject}">
+                                <option value="">Chọn môn học</option>
+                                <option value="Toán học">Toán học</option>
+                                <option value="Vật lý">Vật lý</option>
+                                <option value="Hóa học">Hóa học</option>
+                                <option value="Sinh học">Sinh học</option>
+                                <option value="Lịch sử">Lịch sử</option>
+                                <option value="Địa lý">Địa lý</option>
+                                <option value="Văn học">Văn học</option>
+                                <option value="Tiếng Anh">Tiếng Anh</option>
+                                <option value="Tiếng Việt">Tiếng Việt</option>
+                                <option value="Công nghệ">Công nghệ</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="isPublic" th:field="*{isPublic}">
+                                <label class="form-check-label" for="isPublic">
+                                    Công khai bộ thẻ này
+                                </label>
+                            </div>
+                            <small class="text-muted">Bộ thẻ công khai sẽ được hiển thị cho tất cả người dùng</small>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-plus me-2"></i>Thêm mới
+                            </button>
+                            <a href="/admin/decks" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

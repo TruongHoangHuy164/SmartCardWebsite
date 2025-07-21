@@ -80,6 +80,12 @@ public class AuthController {
             if (userOpt.isPresent()) {
                 User user = userOpt.get();
 
+                // Check if user is enabled before checking password
+                if (user.getEnabled() == null || !user.getEnabled()) {
+                    model.addAttribute("error", "Tài khoản này đã bị khóa!");
+                    return "login/login";
+                }
+
                 if (user.getPassword().equals(password)) {
                     session.setAttribute("loggedInUser", user); // Lưu session
                     if (user.getRole() != null && "ADMIN".equals(user.getRole().getName())) {
@@ -106,5 +112,10 @@ public class AuthController {
     public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
         session.invalidate(); // Xóa session
         return redirectWithMessage("/decks", redirectAttributes, "success", "Đăng xuất thành công!");
+    }
+
+    @GetMapping("/account-locked")
+    public String accountLocked() {
+        return "error/account-locked";
     }
 }

@@ -35,6 +35,9 @@ public class User {
     @Column(name = "created_at")
     private Date createdAt;
 
+    @Column(name = "enabled")
+    private Boolean enabled = true;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;

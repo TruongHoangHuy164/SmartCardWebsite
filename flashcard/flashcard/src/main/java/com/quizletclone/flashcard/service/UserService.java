@@ -95,4 +95,21 @@ public class UserService {
         user.setRole(role);
         return saveUser(user);
     }
+
+    public void setUserEnabled(Integer userId, Boolean enabled) {
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setEnabled(enabled);
+            userRepository.save(user);
+        });
+    }
+
+    public void changeUserRole(Integer userId, String roleName) {
+        User user = userRepository.findById(userId).orElse(null);
+        Role role = roleRepository.findByName(roleName).orElse(null);
+
+        if (user != null && role != null) {
+            user.setRole(role);
+            userRepository.save(user);
+        }
+    }
 }

@@ -47,6 +47,7 @@
     <h2 class="mb-4">➕ Thêm Flashcard mới</h2>
 
     <form th:action="@{/flashcards/create}" method="post" enctype="multipart/form-data">
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
         <input type="hidden" name="deckId" th:value="${flashcard.deck.id}" />
         <input type="hidden" name="imageUrlFromUnsplash" id="imageUrlFromUnsplash" />
 
