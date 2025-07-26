@@ -12,7 +12,7 @@ import com.quizletclone.flashcard.model.Quiz;
 public interface QuizRepository extends JpaRepository<Quiz, Integer> {
     Optional<Quiz> findTopByUserIdAndDeckIdOrderByCreatedAtDesc(Integer userId, Integer deckId);
 
-    @Query("SELECT COUNT(qr) FROM QuizQuestion qr WHERE qr.quiz.deck.id = :deckId")
+    @Query("SELECT COUNT(qr) FROM QuizQuestion qr WHERE qr.flashcard.deck.id = :deckId")
     int countQuestionsByDeckId(@Param("deckId") Integer deckId);
 
     List<Quiz> findByUserId(Integer userId);

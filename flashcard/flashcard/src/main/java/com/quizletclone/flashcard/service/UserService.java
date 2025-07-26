@@ -42,6 +42,8 @@ package com.quizletclone.flashcard.service;
 
 import com.quizletclone.flashcard.model.Role;
 import com.quizletclone.flashcard.model.User;
+import com.quizletclone.flashcard.repository.QuizQuestionResultRepository;
+import com.quizletclone.flashcard.repository.QuizRepository;
 import com.quizletclone.flashcard.repository.RoleRepository;
 import com.quizletclone.flashcard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +58,10 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private QuizRepository quizRepository;
+    @Autowired
+    private QuizQuestionResultRepository quizQuestionResultRepository;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -111,5 +117,12 @@ public class UserService {
             user.setRole(role);
             userRepository.save(user);
         }
+    }
+
+    // Đếm số flashcard user đã học (số QuizQuestionResult có is_correct là true
+    // liên
+    // quan quiz của user)
+    public int countFlashcardsLearnedByUserId(Integer userId) {
+        return quizQuestionResultRepository.countFlashcardsLearnedByUserIdAndIsCorrect(userId);
     }
 }

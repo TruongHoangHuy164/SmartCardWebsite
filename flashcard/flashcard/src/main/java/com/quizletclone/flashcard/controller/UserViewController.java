@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.quizletclone.flashcard.model.User;
+import com.quizletclone.flashcard.repository.QuizRepository;
+import com.quizletclone.flashcard.service.FlashcardService;
 import com.quizletclone.flashcard.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
@@ -23,6 +25,12 @@ import jakarta.servlet.http.HttpSession;
 public class UserViewController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private QuizRepository quizRepository;
+
+    @Autowired
+    private FlashcardService flashcardService;
 
     @GetMapping
     public String listUsers(Model model) {
@@ -60,22 +68,26 @@ public class UserViewController {
         try {
             // Lấy user từ session
             User loggedInUser = (User) session.getAttribute("loggedInUser");
-
             if (loggedInUser == null) {
-                // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
                 return "redirect:/login?error=Vui lòng đăng nhập để xem hồ sơ.";
             }
 
-            // Optional: Lấy lại user từ DB để đảm bảo dữ liệu mới nhất (nếu cần)
+            // Lấy lại user từ DB để đảm bảo dữ liệu mới nhất (nếu cần)
             var userOpt = userService.findById(loggedInUser.getId());
-            if (userOpt.isPresent()) {
-                model.addAttribute("user", userOpt.get());
-            } else {
-                model.addAttribute("user", loggedInUser); // fallback từ session
-            }
+            User user = userOpt.orElse(loggedInUser);
+            model.addAttribute("user", user);
+
+            // Lấy số bộ thẻ và số thẻ đã học
+            int deckLearned = quizRepository.findByUserId(user.getId()).size();
+            int flashcardLearned = userService.countFlashcardsLearnedByUserId(user.getId());
+            int totalFlashcards = flashcardService.getAllFlashcards().size(); // Lấy tổng số thẻ
+            model.addAttribute("deckLearned", deckLearned);
+            model.addAttribute("flashcardLearned", flashcardLearned);
+            // tỉnh tỉ lệ trả lời đúng của ng dùng
+            double correctRate = ((double) flashcardLearned / totalFlashcards) * 100;
+            model.addAttribute("correctRate", String.format("%.2f", correctRate) + "%");
 
             return "user/profile";
-
         } catch (Exception e) {
             model.addAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
             return "user/profile";

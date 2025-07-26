@@ -39,17 +39,12 @@ public class QuizQuestionService {
     }
 
     public int countByDeckId(Integer deckId) {
-        return quizQuestionRepository.countByQuiz_Deck_Id(deckId);
-    }
-
-    public List<QuizQuestion> getQuestionsByQuizId(Integer quizId) {
-        return quizQuestionRepository.findByQuizId(quizId);
+        return quizQuestionRepository.countByFlashcard_Deck_Id(deckId);
     }
 
     public QuizQuestion updateQuestion(Integer id, QuizQuestion updatedQuestion) {
         return quizQuestionRepository.findById(id).map(question -> {
             question.setFlashcard(updatedQuestion.getFlashcard());
-            question.setQuiz(updatedQuestion.getQuiz());
             question.setQuestionText(updatedQuestion.getQuestionText());
             question.setCorrectAnswer(updatedQuestion.getCorrectAnswer());
             return quizQuestionRepository.save(question);

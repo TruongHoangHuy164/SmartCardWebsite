@@ -111,6 +111,7 @@ public class StudyController {
     @ResponseBody
     public ResponseEntity<?> saveQuestionResult(
             @RequestParam Integer questionId,
+            @RequestParam Integer quizId,
             @RequestParam String userAnswer,
             @RequestParam boolean isCorrect) {
 
@@ -120,8 +121,14 @@ public class StudyController {
             return ResponseEntity.badRequest().body("Câu hỏi không tồn tại.");
         }
 
+        Optional<Quiz> quizOpt = quizService.getQuizById(quizId);
+        if (quizOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Quiz không tồn tại.");
+        }
+
         QuizQuestionResult result = new QuizQuestionResult();
         result.setQuizQuestion(questionOpt.get());
+        result.setQuiz(quizOpt.get());
         result.setUserAnswer(userAnswer);
         result.setIsCorrect(isCorrect);
 

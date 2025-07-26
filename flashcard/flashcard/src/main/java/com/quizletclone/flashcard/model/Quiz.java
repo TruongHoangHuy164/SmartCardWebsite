@@ -46,5 +46,5 @@ public class Quiz {
     private Date createdAt;
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
-    private List<QuizQuestion> quizQuestions;
+    private List<QuizQuestionResult> quizQuestionResults;
 }

@@ -79,20 +79,16 @@
                 <div class="stats-card mb-4">
                     <h5 class="fw-bold mb-3">Thống kê học tập</h5>
                     <div class="row text-center">
-                        <div class="col-3">
-                            <h3 class="fw-bold">12</h3>
+                        <div class="col-4">
+                            <h3 class="fw-bold" th:text="${deckLearned}">0</h3>
                             <small>Bộ thẻ</small>
                         </div>
-                        <div class="col-3">
-                            <h3 class="fw-bold">156</h3>
+                        <div class="col-4">
+                            <h3 class="fw-bold" th:text="${flashcardLearned}">0</h3>
                             <small>Thẻ đã học</small>
                         </div>
-                        <div class="col-3">
-                            <h3 class="fw-bold">23</h3>
-                            <small>Ngày liên tiếp</small>
-                        </div>
-                        <div class="col-3">
-                            <h3 class="fw-bold">85%</h3>
+                        <div class="col-4">
+                            <h3 class="fw-bold" th:text="${correctRate != null ? correctRate : '0%'}">0%</h3>
                             <small>Tỷ lệ đúng</small>
                         </div>
                     </div>

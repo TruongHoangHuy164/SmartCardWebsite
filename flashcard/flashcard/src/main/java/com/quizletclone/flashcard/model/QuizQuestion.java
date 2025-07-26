@@ -1,7 +1,5 @@
 package com.quizletclone.flashcard.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,11 +19,6 @@ public class QuizQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @ManyToOne
-    @JoinColumn(name = "quiz_id", nullable = true)
-    @JsonIgnore
-    private Quiz quiz;
 
     @ManyToOne
     @JoinColumn(name = "flashcard_id", nullable = false)

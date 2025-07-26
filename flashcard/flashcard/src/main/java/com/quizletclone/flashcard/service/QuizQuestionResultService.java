@@ -28,7 +28,4 @@ public class QuizQuestionResultService {
         return quizQuestionResultRepository.findById(id);
     }
 
-    public int countCorrectByQuiz(Integer quizId) {
-        return quizQuestionResultRepository.countByQuizQuestion_Quiz_IdAndIsCorrectTrue(quizId);
-    }
 }

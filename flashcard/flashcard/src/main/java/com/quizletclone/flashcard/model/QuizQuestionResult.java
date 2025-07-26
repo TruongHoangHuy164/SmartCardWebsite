@@ -1,5 +1,7 @@
 package com.quizletclone.flashcard.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,4 +31,9 @@ public class QuizQuestionResult {
 
     @Column(name = "is_correct")
     private Boolean isCorrect;
+
+    @ManyToOne
+    @JoinColumn(name = "quiz_id", nullable = true)
+    @JsonIgnore
+    private Quiz quiz;
 }
