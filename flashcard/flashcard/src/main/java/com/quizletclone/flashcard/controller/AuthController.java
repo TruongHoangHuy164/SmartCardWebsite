@@ -48,6 +48,9 @@ public class AuthController {
             }
 
             userService.saveUserWithRole(user, "USER");
+            // lưu created_at
+            user.setCreatedAt(new java.util.Date());
+            userService.saveUser(user);
             session.setAttribute("loggedInUser", user);
             return redirectWithMessage("/", redirectAttributes, "success", "Đăng ký và đăng nhập thành công!");
         } catch (Exception e) {

@@ -94,16 +94,16 @@
                     <nav aria-label="MyDecks Pagination" class="mt-3">
                         <ul class="pagination justify-content-center">
                             <li class="page-item" th:classappend="${pageMy == 0} ? 'disabled'">
-                                <a class="page-link"
+                                <a class="page-link deck-pagination"
                                     th:href="@{/decks(pageMy=${pageMy - 1}, pageOther=${pageOther})}">&laquo;</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(0, totalMyPages - 1)}"
                                 th:classappend="${i == pageMy} ? 'active'">
-                                <a class="page-link" th:href="@{/decks(pageMy=${i}, pageOther=${pageOther})}"
-                                    th:text="${i + 1}">1</a>
+                                <a th:href="@{/decks(pageMy=${i}, pageOther=${pageOther})}"
+                                    class="page-link deck-pagination" th:text="${i + 1}">1</a>
                             </li>
                             <li class="page-item" th:classappend="${pageMy + 1 == totalMyPages} ? 'disabled'">
-                                <a class="page-link"
+                                <a class="page-link deck-pagination"
                                     th:href="@{/decks(pageMy=${pageMy + 1}, pageOther=${pageOther})}">&raquo;</a>
                             </li>
                         </ul>
@@ -129,16 +129,16 @@
                     <nav aria-label="OtherDecks Pagination" class="mt-3">
                         <ul class="pagination justify-content-center">
                             <li class="page-item" th:classappend="${pageOther == 0} ? 'disabled'">
-                                <a class="page-link"
+                                <a class="page-link deck-pagination"
                                     th:href="@{/decks(pageMy=${pageMy}, pageOther=${pageOther - 1})}">&laquo;</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(0, totalOtherPages - 1)}"
                                 th:classappend="${i == pageOther} ? 'active'">
-                                <a class="page-link" th:href="@{/decks(pageMy=${pageMy}, pageOther=${i})}"
-                                    th:text="${i + 1}">1</a>
+                                <a th:href="@{/decks(pageMy=${pageMy}, pageOther=${i})}"
+                                    class="page-link deck-pagination" th:text="${i + 1}">1</a>
                             </li>
                             <li class="page-item" th:classappend="${pageOther + 1 == totalOtherPages} ? 'disabled'">
-                                <a class="page-link"
+                                <a class="page-link deck-pagination"
                                     th:href="@{/decks(pageMy=${pageMy}, pageOther=${pageOther + 1})}">&raquo;</a>
                             </li>
                         </ul>
@@ -147,6 +147,10 @@
             </div>
         </div>
     </div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/page.js"></script>
 </body>
 
 </html>
