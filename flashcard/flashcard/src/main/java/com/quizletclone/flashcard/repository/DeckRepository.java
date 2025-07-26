@@ -1,5 +1,6 @@
 package com.quizletclone.flashcard.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -21,4 +22,6 @@ public interface DeckRepository extends JpaRepository<Deck, Integer> {
     List<Deck> findByUser(User user);
 
     List<Deck> findByUserNot(User user);
+
+    List<Deck> findByUserAndCreatedAtBetween(User user, Date startDate, Date endDate);
 }

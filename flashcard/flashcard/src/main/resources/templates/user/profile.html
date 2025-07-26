@@ -54,7 +54,7 @@
                 <div class="profile-card p-4 mb-4">
                     <div class="text-center mb-4">
                         <img th:if="${user.avatarUrl}" th:src="${user.avatarUrl}" alt="Avatar" class="avatar mb-3" />
-                        <img th:unless="${user.avatarUrl}" src="/flashcard/flashcard/uploads/upload/avt-default.webp" alt="Default Avatar"
+                        <img th:unless="${user.avatarUrl}" src="/images/avt-default.webp" alt="Default Avatar"
                             class="avatar mb-3" />
                         <h4 class="fw-bold" th:text="${user.username}">Tên người dùng</h4>
                         <p class="text-muted" th:text="${user.email}">email@example.com</p>
@@ -97,28 +97,30 @@
                 <!-- Recent Activity -->
                 <div class="profile-card p-4">
                     <h5 class="fw-bold mb-3">Hoạt động gần đây</h5>
-                    <div class="list-group list-group-flush">
-                        <div class="list-group-item d-flex align-items-center">
-                            <i class="fas fa-play-circle text-success me-3"></i>
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">Học bộ thẻ "Từ vựng Tiếng Anh"</h6>
-                                <small class="text-muted">2 giờ trước</small>
+                    <div class="list-group list-group-flush" style="max-height:500px; overflow-y:auto;">
+                        <!-- Hoạt động tạo bộ thẻ -->
+                        <th:block th:each="deck : ${decks}">
+                            <div class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-plus-circle text-primary me-3"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Tạo bộ thẻ "<span th:text="${deck.title}"></span>"</h6>
+                                    <small class="text-muted" th:text="${#dates.createNow().getTime() - deck.createdAt.time > 3600000 ? T(java.lang.Math).round((#dates.createNow().getTime() - deck.createdAt.time) / 3600000.0) + ' giờ trước' : T(java.lang.Math).round((#dates.createNow().getTime() - deck.createdAt.time) / 60000.0) + ' phút trước'}"></small>
+                                </div>
                             </div>
-                        </div>
-                        <div class="list-group-item d-flex align-items-center">
-                            <i class="fas fa-plus-circle text-primary me-3"></i>
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">Tạo bộ thẻ "Công thức Toán học"</h6>
-                                <small class="text-muted">1 ngày trước</small>
+                        </th:block>
+                        <!-- Hoạt động làm quiz -->
+                        <th:block th:each="quiz : ${quizzes}">
+                            <div class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-play-circle text-success me-3"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Làm quiz bộ thẻ "<span th:text="${quiz.deck.title}"></span>"</h6>
+                                    <small class="text-muted" th:text="${#dates.createNow().getTime() - quiz.createdAt.time > 3600000 ? T(java.lang.Math).round((#dates.createNow().getTime() - quiz.createdAt.time) / 3600000.0) + ' giờ trước' : T(java.lang.Math).round((#dates.createNow().getTime() - quiz.createdAt.time) / 60000.0) + ' phút trước'}"></small>
+                                </div>
                             </div>
-                        </div>
-                        <div class="list-group-item d-flex align-items-center">
-                            <i class="fas fa-star text-warning me-3"></i>
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">Hoàn thành 100% bộ thẻ "Lịch sử Việt Nam"</h6>
-                                <small class="text-muted">3 ngày trước</small>
-                            </div>
-                        </div>
+                        </th:block>
+                        <th:block th:if="${#lists.isEmpty(decks) and #lists.isEmpty(quizzes)}">
+                            <div class="list-group-item text-center text-muted">Không có hoạt động nào trong 24 giờ qua.</div>
+                        </th:block>
                     </div>
                 </div>
             </div>

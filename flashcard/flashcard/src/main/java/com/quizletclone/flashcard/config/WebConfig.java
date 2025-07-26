@@ -31,6 +31,6 @@ public class WebConfig implements WebMvcConfigurer {
         String uploadPath = Paths.get("flashcard/flashcard/uploads/upload").toAbsolutePath().toString();
 
         registry.addResourceHandler("/images/**") // URL sẽ bắt đầu bằng /images/
-                .addResourceLocations("file:" + uploadPath + "/"); // ánh xạ tới thư mục thực
+                .addResourceLocations("file:" + uploadPath + "/"); // ánh xạ tới thư mục thực   
     }
 }

@@ -1,5 +1,6 @@
 package com.quizletclone.flashcard.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.quizletclone.flashcard.model.Deck;
+import com.quizletclone.flashcard.model.Quiz;
 import com.quizletclone.flashcard.model.User;
+import com.quizletclone.flashcard.repository.DeckRepository;
 import com.quizletclone.flashcard.repository.QuizRepository;
 import com.quizletclone.flashcard.service.FlashcardService;
 import com.quizletclone.flashcard.service.UserService;
@@ -31,6 +35,9 @@ public class UserViewController {
 
     @Autowired
     private FlashcardService flashcardService;
+
+    @Autowired
+    private DeckRepository deckRepository;
 
     @GetMapping
     public String listUsers(Model model) {
@@ -81,11 +88,20 @@ public class UserViewController {
             int deckLearned = quizRepository.findByUserId(user.getId()).size();
             int flashcardLearned = userService.countFlashcardsLearnedByUserId(user.getId());
             int totalFlashcards = flashcardService.getAllFlashcards().size(); // Lấy tổng số thẻ
+            // thời gian trong vòng 24h
+            Date endDate = new Date();
+            Date startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000); // 24 giờ trước
+
+            List<Quiz> quizzes = quizRepository.findByUserAndCreatedAtBetween(user, startDate, endDate);
+            List<Deck> decks = deckRepository.findByUserAndCreatedAtBetween(user, startDate, endDate);
+
             model.addAttribute("deckLearned", deckLearned);
             model.addAttribute("flashcardLearned", flashcardLearned);
             // tỉnh tỉ lệ trả lời đúng của ng dùng
             double correctRate = ((double) flashcardLearned / totalFlashcards) * 100;
             model.addAttribute("correctRate", String.format("%.2f", correctRate) + "%");
+            model.addAttribute("quizzes", quizzes);
+            model.addAttribute("decks", decks);
 
             return "user/profile";
         } catch (Exception e) {
