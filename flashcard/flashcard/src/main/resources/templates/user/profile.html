@@ -104,7 +104,11 @@
                                 <i class="fas fa-plus-circle text-primary me-3"></i>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-1">Tạo bộ thẻ "<span th:text="${deck.title}"></span>"</h6>
-                                    <small class="text-muted" th:text="${#dates.createNow().getTime() - deck.createdAt.time > 3600000 ? T(java.lang.Math).round((#dates.createNow().getTime() - deck.createdAt.time) / 3600000.0) + ' giờ trước' : T(java.lang.Math).round((#dates.createNow().getTime() - deck.createdAt.time) / 60000.0) + ' phút trước'}"></small>
+                                    <small class="text-muted"
+                                        th:text="${#dates.createNow().getTime() - deck.createdAt.time > 3600000
+                                            ? T(java.lang.Math).round((#dates.createNow().getTime() - deck.createdAt.time) / 3600000.0) + ' giờ trước' 
+                                            : T(java.lang.Math).round((#dates.createNow().getTime() - deck.createdAt.time) / 60000.0) + ' phút trước'}">
+                                    </small>
                                 </div>
                             </div>
                         </th:block>
@@ -114,12 +118,17 @@
                                 <i class="fas fa-play-circle text-success me-3"></i>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-1">Làm quiz bộ thẻ "<span th:text="${quiz.deck.title}"></span>"</h6>
-                                    <small class="text-muted" th:text="${#dates.createNow().getTime() - quiz.createdAt.time > 3600000 ? T(java.lang.Math).round((#dates.createNow().getTime() - quiz.createdAt.time) / 3600000.0) + ' giờ trước' : T(java.lang.Math).round((#dates.createNow().getTime() - quiz.createdAt.time) / 60000.0) + ' phút trước'}"></small>
+                                    <small class="text-muted"
+                                        th:text="${#dates.createNow().getTime() - quiz.createdAt.time > 3600000
+                                        ? T(java.lang.Math).round((#dates.createNow().getTime() - quiz.createdAt.time) / 3600000.0) + ' giờ trước' 
+                                        : T(java.lang.Math).round((#dates.createNow().getTime() - quiz.createdAt.time) / 60000.0) + ' phút trước'}">
+                                    </small>
                                 </div>
                             </div>
                         </th:block>
                         <th:block th:if="${#lists.isEmpty(decks) and #lists.isEmpty(quizzes)}">
-                            <div class="list-group-item text-center text-muted">Không có hoạt động nào trong 24 giờ qua.</div>
+                            <div class="list-group-item text-center text-muted">Không có hoạt động nào trong 24 giờ qua.
+                            </div>
                         </th:block>
                     </div>
                 </div>
