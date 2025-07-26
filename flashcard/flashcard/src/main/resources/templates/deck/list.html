@@ -79,10 +79,17 @@
             <!-- My Decks -->
             <div class="mb-5">
                 <h4 class="mb-3">Bộ thẻ của tôi</h4>
+                <div id="loadingIndicator" class="text-center text-muted my-3" style="display: none;">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <div class="mt-2">Đang tải dữ liệu...</div>
+                </div>
                 <div class="row g-4" th:if="${pagedMyDecks != null and pagedMyDecks.empty}">
                     <div class="col-12 text-center text-muted">
                         Bạn chưa có bộ thẻ nào.
                     </div>
+                    <a id="createDeckLink" href="/decks/create?" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Tạo bộ thẻ đầu tiên
+                    </a>
                 </div>
                 <div class="row g-4" th:if="${!#lists.isEmpty(pagedMyDecks)}">
                     <div class="col-md-3" th:each="deck : ${pagedMyDecks}">
@@ -114,6 +121,10 @@
             <!-- Public Decks -->
             <div>
                 <h4 class="mb-3">Bộ thẻ công khai</h4>
+                <div id="loadingIndicator" class="text-center text-muted my-3" style="display: none;">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <div class="mt-2">Đang tải dữ liệu...</div>
+                </div>
                 <div class="row g-4" th:if="${pagedOtherDecks != null and pagedOtherDecks.empty}">
                     <div class="col-12 text-center text-muted">
                         Không có bộ thẻ nào.

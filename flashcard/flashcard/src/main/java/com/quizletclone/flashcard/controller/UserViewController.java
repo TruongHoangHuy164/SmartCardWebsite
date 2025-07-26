@@ -73,39 +73,43 @@ public class UserViewController {
     @GetMapping("/profile")
     public String showProfile(HttpSession session, Model model) {
         try {
-            // Lấy user từ session
+            // Get user from session
             User loggedInUser = (User) session.getAttribute("loggedInUser");
             if (loggedInUser == null) {
-                return "redirect:/login?error=Vui lòng đăng nhập để xem hồ sơ.";
+                model.addAttribute("error", "Please log in to view your profile.");
+                System.out.println("User not logged in");
+                return "login/login";
             }
 
-            // Lấy lại user từ DB để đảm bảo dữ liệu mới nhất (nếu cần)
+            // Reload user from DB to ensure latest data
             var userOpt = userService.findById(loggedInUser.getId());
             User user = userOpt.orElse(loggedInUser);
             model.addAttribute("user", user);
 
-            // Lấy số bộ thẻ và số thẻ đã học
+            // Get number of decks and flashcards learned
             int deckLearned = quizRepository.findByUserId(user.getId()).size();
             int flashcardLearned = userService.countFlashcardsLearnedByUserId(user.getId());
-            int totalFlashcards = flashcardService.getAllFlashcards().size(); // Lấy tổng số thẻ
-            // thời gian trong vòng 24h
+            int totalFlashcards = flashcardService.getAllFlashcards().size(); // Get total flashcards
+
+            // Time range: last 24 hours
             Date endDate = new Date();
-            Date startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000); // 24 giờ trước
+            Date startDate = new Date(endDate.getTime() - 24L * 60 * 60 * 1000); // 24 hours ago
 
             List<Quiz> quizzes = quizRepository.findByUserAndCreatedAtBetween(user, startDate, endDate);
             List<Deck> decks = deckRepository.findByUserAndCreatedAtBetween(user, startDate, endDate);
 
             model.addAttribute("deckLearned", deckLearned);
             model.addAttribute("flashcardLearned", flashcardLearned);
-            // tỉnh tỉ lệ trả lời đúng của ng dùng
-            double correctRate = ((double) flashcardLearned / totalFlashcards) * 100;
+
+            // Calculate correct answer rate
+            double correctRate = totalFlashcards > 0 ? ((double) flashcardLearned / totalFlashcards) * 100 : 0;
             model.addAttribute("correctRate", String.format("%.2f", correctRate) + "%");
             model.addAttribute("quizzes", quizzes);
             model.addAttribute("decks", decks);
 
             return "user/profile";
         } catch (Exception e) {
-            model.addAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
+            model.addAttribute("error", "An error occurred: " + e.getMessage());
             return "user/profile";
         }
     }

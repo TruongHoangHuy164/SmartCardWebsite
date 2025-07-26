@@ -99,6 +99,18 @@
         <div class="login-right">
             <form class="login-form shadow p-4 rounded bg-white" th:action="@{/login}" method="post">
                 <h3 class="mb-4 text-center fw-bold">Đăng nhập</h3>
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span th:text="${success}">Thành công</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span th:text="${error}">Lỗi</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
                 <button type="button" class="btn btn-outline-dark btn-login-social mb-2">
                     <i class="fab fa-google me-2"></i> Đăng nhập với Google
                 </button>
@@ -134,5 +146,7 @@
         </div>
     </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:src="@{/js/login.js}"></script>
 
 </html>
