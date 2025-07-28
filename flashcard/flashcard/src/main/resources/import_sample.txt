@@ -1,0 +1,7 @@
+##Toán học;Đại số;Các công thức cơ bản
+Phương trình bậc nhất;ax + b = 0
+Hàm số bậc hai;y = ax^2 + bx + c
+##Tiếng Anh;Từ vựng;Từ vựng cơ bản
+Apple;Quả táo
+Book;Quyển sách
+Cat;Con mèo
