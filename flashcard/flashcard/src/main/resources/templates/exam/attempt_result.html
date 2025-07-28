@@ -97,7 +97,7 @@
                     th:text="${(total != null ? total : 0) - (correctCount != null ? correctCount : 0)}"></span>
             </div>
             <table class="table table-hover align-middle">
-                
+
                 <tbody>
                     <tr th:each="result,iter : ${results}">
                         <td th:text="${iter.index + 1}"></td>
