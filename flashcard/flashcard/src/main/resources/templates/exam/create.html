@@ -68,30 +68,44 @@
         }
 
         /* Không có hiệu ứng hover cho bảng */
+        .quizlet-detail {
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 28px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+            padding: 48px 48px 36px 48px;
+            max-width: 600px;
+        }
     </style>
 </head>
 
 <body>
     <div layout:fragment="content">
-        <div class="quizlet-form">
+        <div class="quizlet-detail">
             <h2 class="mb-4">Tạo đề thi mới</h2>
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
             <form th:action="@{/exams/create}" method="post" th:object="${exam}">
-                <label for="title">Tên đề thi</label>
-                <input type="text" id="title" th:field="*{title}" required />
-
-                <label for="description">Mô tả</label>
-                <textarea id="description" th:field="*{description}" rows="3"></textarea>
-
-                <label for="duration">Thời gian làm bài (phút)</label>
-                <input type="number" id="duration" th:field="*{duration}" min="1" required />
-
-                <label for="isPublic">Công khai</label>
-                <select id="isPublic" th:field="*{public}">
-                    <option th:value="true">Công khai</option>
-                    <option th:value="false">Riêng tư</option>
-                </select>
-
-                <button type="submit">Lưu đề thi</button>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Tên đề thi</label>
+                    <input type="text" id="title" th:field="*{title}" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Mô tả</label>
+                    <textarea id="description" th:field="*{description}" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="duration" class="form-label">Thời gian làm bài (phút)</label>
+                    <input type="number" id="duration" th:field="*{duration}" class="form-control" min="1" required />
+                </div>
+                <div class="mb-3">
+                    <label for="isPublic" class="form-label">Công khai</label>
+                    <select id="isPublic" th:field="*{public}" class="form-select">
+                        <option th:value="true">Công khai</option>
+                        <option th:value="false">Riêng tư</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Lưu đề thi</button>
             </form>
         </div>
     </div>

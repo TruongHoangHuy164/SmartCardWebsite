@@ -20,6 +20,7 @@
             border-radius: 28px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
             padding: 48px 48px 36px 48px;
+            max-width: 1200px;
         }
 
         .quizlet-list h2 {
@@ -107,7 +108,7 @@
         }
 
         .quizlet-list .btn-danger {
-            background: #ff3b30;
+            background: #ff3a30f2;
             border: none;
         }
 
@@ -131,9 +132,14 @@
         <div class="quizlet-list">
             <div class="d-flex justify-content-between align-items-center">
                 <h2>Danh sách đề thi công khai</h2>
-                <a href="/exams/create" class="btn btn-primary">
-                    Tạo đề thi mới
-                </a>
+                <div class="actions">
+                    <a href="/exams/create" class="btn btn-primary">
+                        Tạo đề thi mới
+                    </a>
+                    <a th:if="${session.loggedInUser != null}" href="/exams/attempt/history" class="btn btn-info">
+                        Lịch sử làm bài
+                    </a>
+                </div>
             </div>
             <table class="table align-middle">
                 <thead>
@@ -162,6 +168,12 @@
                                 class="btn btn-success">
                                 Bắt đầu
                             </a>
+                            <form
+                                th:if="${session.loggedInUser != null and exam.createdBy == session.loggedInUser.username}"
+                                th:action="@{'/exams/' + ${exam.id} + '/delete'}" method="post" style="display:inline;"
+                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa đề này?');">
+                                <button type="submit" class="btn btn-danger">Xóa</button>
+                            </form>
                         </td>
                     </tr>
                 </tbody>

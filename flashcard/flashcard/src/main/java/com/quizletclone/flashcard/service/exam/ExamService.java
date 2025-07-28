@@ -2,8 +2,10 @@ package com.quizletclone.flashcard.service.exam;
 
 import com.quizletclone.flashcard.model.exam.Exam;
 import com.quizletclone.flashcard.repository.exam.ExamRepository;
+import com.quizletclone.flashcard.repository.exam.ExamAttemptRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +15,8 @@ import java.util.Random;
 public class ExamService {
     @Autowired
     private ExamRepository examRepository;
+    @Autowired
+    private ExamAttemptRepository examAttemptRepository;
 
     public Exam createExam(Exam exam) {
         if (exam.getCode() == null || exam.getCode().isEmpty()) {
@@ -62,5 +66,12 @@ public class ExamService {
         return examRepository.findAll().stream()
                 .filter(e -> username.equals(e.getCreatedBy()))
                 .toList();
+    }
+
+    @Transactional
+    public void deleteExam(Long id) {
+        // Xóa tất cả các attempt liên quan trước
+        examAttemptRepository.deleteByExam_Id(id);
+        examRepository.deleteById(id);
     }
 }

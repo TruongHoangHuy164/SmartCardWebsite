@@ -1,6 +1,5 @@
 package com.quizletclone.flashcard.model.exam;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,6 +18,7 @@ public class ExamAttempt {
     private LocalDateTime submittedAt;
     private int score;
     private int correctCount;
+    private Integer remainingTime; // Thời gian còn lại (phút)
 
     @OneToMany(mappedBy = "attempt", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -86,5 +86,13 @@ public class ExamAttempt {
 
     public void setAnswers(List<ExamAttemptAnswer> answers) {
         this.answers = answers;
+    }
+
+    public Integer getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(Integer remainingTime) {
+        this.remainingTime = remainingTime;
     }
 }

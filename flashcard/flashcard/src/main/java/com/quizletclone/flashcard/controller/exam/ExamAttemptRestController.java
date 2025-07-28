@@ -30,11 +30,12 @@ public class ExamAttemptRestController {
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<ExamAttempt> submitExam(@RequestParam Long attemptId, @RequestBody Map<Long, Long> answers) {
+    public ResponseEntity<ExamAttempt> submitExam(@RequestParam Long attemptId, @RequestBody Map<Long, Long> answers,
+            @RequestParam(required = false) Integer remainingTime) {
         Optional<ExamAttempt> attemptOpt = examAttemptService.getById(attemptId);
         if (attemptOpt.isEmpty())
             return ResponseEntity.notFound().build();
-        Optional<ExamAttempt> submitted = examAttemptService.submitAttempt(attemptOpt.get(), answers);
+        Optional<ExamAttempt> submitted = examAttemptService.submitAttempt(attemptOpt.get(), answers, remainingTime);
         return submitted.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 

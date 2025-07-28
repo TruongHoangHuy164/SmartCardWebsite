@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,13 +52,25 @@ public class ExamAttemptService {
         ExamAttempt attempt = new ExamAttempt();
         attempt.setExam(exam);
         attempt.setUserId(userId);
-        attempt.setStartedAt(LocalDateTime.now());
+
+        // Đảm bảo thời gian bắt đầu được lưu chính xác với múi giờ Việt Nam
+        ZoneId vietnamZone = ZoneId.of("Asia/Ho_Chi_Minh");
+        ZonedDateTime vietnamTime = ZonedDateTime.now(vietnamZone);
+        LocalDateTime startTime = vietnamTime.toLocalDateTime();
+        attempt.setStartedAt(startTime);
+
+        // Debug: In ra thời gian bắt đầu
+        System.out.println("=== DEBUG: Tạo attempt mới ===");
+        System.out.println("User: " + userId);
+        System.out.println("Exam: " + exam.getTitle());
+        System.out.println("StartedAt: " + startTime);
+        System.out.println("=== END DEBUG ===");
 
         return Optional.of(examAttemptRepository.save(attempt));
     }
 
     @Transactional
-    public Optional<ExamAttempt> submitAttempt(ExamAttempt attempt, Map<Long, Long> answers) {
+    public Optional<ExamAttempt> submitAttempt(ExamAttempt attempt, Map<Long, Long> answers, Integer remainingTime) {
         if (attempt == null || answers == null) {
             return Optional.empty();
         }
@@ -70,9 +84,33 @@ public class ExamAttemptService {
                     correctCount++;
             }
         }
-        attempt.setSubmittedAt(java.time.LocalDateTime.now());
+        // Đảm bảo thời gian nộp bài được lưu chính xác với múi giờ Việt Nam
+        ZoneId vietnamZone = ZoneId.of("Asia/Ho_Chi_Minh");
+        ZonedDateTime vietnamTime = ZonedDateTime.now(vietnamZone);
+        LocalDateTime submitTime = vietnamTime.toLocalDateTime();
+        attempt.setSubmittedAt(submitTime);
         attempt.setScore(correctCount);
         attempt.setCorrectCount(correctCount);
+        // Sửa logic lưu remainingTime: nếu lớn hơn 60 thì chia cho 60 (giây -> phút)
+        if (remainingTime != null) {
+            if (remainingTime > 60) {
+                attempt.setRemainingTime(remainingTime / 60);
+            } else {
+                attempt.setRemainingTime(remainingTime);
+            }
+        } else {
+            attempt.setRemainingTime(null);
+        }
+
+        // Debug: In ra thông tin submit
+        System.out.println("=== DEBUG: Submit attempt ===");
+        System.out.println("Attempt ID: " + attempt.getId());
+        System.out.println("User: " + attempt.getUserId());
+        System.out.println("StartedAt: " + attempt.getStartedAt());
+        System.out.println("SubmittedAt: " + submitTime);
+        System.out.println("Score: " + correctCount);
+        System.out.println("=== END DEBUG ===");
+
         // Tăng số lượt làm bài
         Exam exam = attempt.getExam();
         Integer attempts = exam.getTotalAttempts();
@@ -84,6 +122,12 @@ public class ExamAttemptService {
     public java.util.List<ExamAttempt> getAttemptsByExam(Exam exam) {
         return examAttemptRepository.findAll().stream()
                 .filter(a -> a.getExam().getId().equals(exam.getId()))
+                .toList();
+    }
+
+    public java.util.List<ExamAttempt> getAttemptsByUser(String userId) {
+        return examAttemptRepository.findAll().stream()
+                .filter(a -> a.getUserId().equals(userId))
                 .toList();
     }
 }

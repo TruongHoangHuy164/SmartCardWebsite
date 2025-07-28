@@ -21,6 +21,39 @@
             border-radius: 28px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
             padding: 48px 48px 36px 48px;
+            max-width: 1200px;
+        }
+
+        .quizlet-detail .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .quizlet-detail .actions a,
+        .quizlet-detail .actions button,
+        .quizlet-detail .actions form {
+            margin-right: 0 !important;
+        }
+
+        .quizlet-detail .info span {
+            display: inline-block;
+            margin-right: 32px;
+            color: #666;
+            font-size: 17px;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 900px) {
+            .quizlet-detail {
+                padding: 24px 8px 16px 8px;
+            }
+
+            .quizlet-detail .info span {
+                font-size: 15px;
+                margin-right: 12px;
+            }
         }
 
         .quizlet-detail h2 {
@@ -158,6 +191,14 @@
             background: #248a3d;
         }
 
+        .quizlet-detail .btn-success i {
+            margin-right: 6px;
+        }
+
+        .quizlet-detail .btn-info i {
+            margin-right: 6px;
+        }
+
         .quizlet-detail .btn-info {
             background: #5ac8fa;
             border: none;
@@ -239,7 +280,19 @@
             </div>
             <div class="actions">
                 <a th:href="@{'/exams/attempt/' + ${exam.id}}" class="btn btn-primary">Bắt đầu làm bài</a>
-
+                <a th:if="${session.loggedInUser != null and exam.createdBy == session.loggedInUser.username}"
+                    th:href="@{'/exams/' + ${exam.id} + '/attempt-history'}" class="btn btn-info">
+                    <i class=""></i> Xem lịch sử
+                </a>
+                <a th:if="${session.loggedInUser != null and exam.createdBy == session.loggedInUser.username}"
+                    th:href="@{'/exams/' + ${exam.id} + '/export-results'}" class="btn btn-success">
+                    <i class=""></i> Xuất bảng điểm
+                </a>
+                <form th:if="${session.loggedInUser != null and exam.createdBy == session.loggedInUser.username}"
+                    th:action="@{'/exams/' + ${exam.id} + '/delete'}" method="post" style="display:inline;"
+                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa đề này?');">
+                    <button type="submit" class="btn btn-danger">Xóa đề</button>
+                </form>
             </div>
             <h3 class="mt-4">Danh sách câu hỏi</h3>
             <form th:if="${session.loggedInUser != null and exam.createdBy == session.loggedInUser.username}"

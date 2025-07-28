@@ -63,6 +63,7 @@ public class ExamAttemptMvcController {
     @PostMapping("/{attemptId}/submit")
     public String submitAttempt(@PathVariable Long attemptId,
             @RequestParam Map<String, String> answers,
+            @RequestParam(required = false) Integer remainingTime,
             HttpSession session) {
         Optional<ExamAttempt> attemptOpt = examAttemptService.getById(attemptId);
         if (attemptOpt.isEmpty()) {
@@ -82,7 +83,8 @@ public class ExamAttemptMvcController {
                 processedAnswers.put(questionId, optionId);
             }
         });
-        Optional<ExamAttempt> submittedAttempt = examAttemptService.submitAttempt(attempt, processedAnswers);
+        Optional<ExamAttempt> submittedAttempt = examAttemptService.submitAttempt(attempt, processedAnswers,
+                remainingTime);
         if (submittedAttempt.isEmpty()) {
             return "error/404";
         }
@@ -108,5 +110,16 @@ public class ExamAttemptMvcController {
         // model.addAttribute("results",
         // examAttemptAnswerService.getAnswersByAttempt(attempt));
         return "exam/attempt_result";
+    }
+
+    @GetMapping("/history")
+    public String attemptHistory(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        var attempts = examAttemptService.getAttemptsByUser(user.getUsername());
+        model.addAttribute("attempts", attempts);
+        return "exam/attempt_history";
     }
 }
