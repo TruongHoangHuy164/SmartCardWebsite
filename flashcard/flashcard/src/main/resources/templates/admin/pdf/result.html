@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Kết quả xử lý</title>
+</head>
+
+<body>
+    <h2>Kết quả đề thi đã chuẩn hóa</h2>
+
+    <pre th:text="${result}">Đang tải kết quả...</pre>
+
+    <a th:href="@{/admin/upload}">← Quay lại trang upload</a>
+
+</body>
+
+</html>

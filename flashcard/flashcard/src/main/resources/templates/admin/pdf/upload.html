@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Upload PDF</title>
+</head>
+
+<body>
+    <h2>Phân tích đề thi Tiếng Anh (PDF)</h2>
+
+    <form th:action="@{/admin/upload}" method="post" enctype="multipart/form-data">
+        <label>Chọn file PDF đề thi:</label><br>
+        <input type="file" name="file" accept="application/pdf" required><br>
+        <button type="submit">Phân tích</button>
+    </form>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+
+</body>
+
+</html>
