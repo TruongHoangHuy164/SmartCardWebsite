@@ -1,5 +1,6 @@
 package com.quizletclone.flashcard.model;
 
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -39,6 +40,9 @@ public class Flashcard {
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    @Column(name = "created_at")
+    private Date createdAt;
 
     @OneToMany(mappedBy = "flashcard", cascade = CascadeType.ALL)
     @JsonIgnore

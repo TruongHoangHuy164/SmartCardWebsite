@@ -209,4 +209,8 @@ public class DeckService {
             return deckRepository.findAll(pageable);
         }
     }
+
+    public int countDecksByMonthAndYear(int month, int year) {
+        return deckRepository.countDecksByMonthAndYear(month, year);
+    }
 }

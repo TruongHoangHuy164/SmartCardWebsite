@@ -37,4 +37,8 @@ public class FlashcardService {
     public void deleteFlashcard(Integer id) {
         flashcardRepository.deleteById(id);
     }
+
+    public int countFlashcardsByMonthAndYear(int month, int year) {
+        return flashcardRepository.countFlashcardsByMonthAndYear(month, year);
+    }
 }

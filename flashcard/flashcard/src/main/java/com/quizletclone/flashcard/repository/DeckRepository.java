@@ -24,4 +24,8 @@ public interface DeckRepository extends JpaRepository<Deck, Integer> {
     List<Deck> findByUserNot(User user);
 
     List<Deck> findByUserAndCreatedAtBetween(User user, Date startDate, Date endDate);
+
+    @org.springframework.data.jpa.repository.Query(value = "SELECT COUNT(*) FROM decks WHERE MONTH(created_at) = :month AND YEAR(created_at) = :year", nativeQuery = true)
+    int countDecksByMonthAndYear(@org.springframework.data.repository.query.Param("month") int month, @org.springframework.data.repository.query.Param("year") int year);
+
 }

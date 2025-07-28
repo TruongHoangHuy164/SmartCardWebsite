@@ -12,6 +12,8 @@ import com.quizletclone.flashcard.model.User;
 import com.quizletclone.flashcard.service.UserService;
 import static com.quizletclone.flashcard.util.UrlHelper.redirectWithMessage;
 
+import com.quizletclone.flashcard.config.OnlineUserSessionListener;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -91,6 +93,8 @@ public class AuthController {
 
                 if (user.getPassword().equals(password)) {
                     session.setAttribute("loggedInUser", user); // Lưu session
+                    // Đánh dấu user online
+                    OnlineUserSessionListener.addOnlineUser(user.getId());
                     if (user.getRole() != null && "ADMIN".equals(user.getRole().getName())) {
                         return redirectWithMessage("/admin", redirectAttributes, "success",
                                 "Đăng nhập admin thành công!");
@@ -114,6 +118,10 @@ public class AuthController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
+        Object userObj = session.getAttribute("loggedInUser");
+        if (userObj instanceof com.quizletclone.flashcard.model.User user) {
+            OnlineUserSessionListener.removeOnlineUser(user.getId());
+        }
         session.invalidate(); // Xóa session
         return redirectWithMessage("/decks", redirectAttributes, "success", "Đăng xuất thành công!");
     }

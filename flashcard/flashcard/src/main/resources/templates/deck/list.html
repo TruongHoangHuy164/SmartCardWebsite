@@ -30,7 +30,7 @@
                 <h1 class="fw-bold">Bộ thẻ của tôi</h1>
                 <p class="text-muted">Quản lý và học tập với các bộ thẻ flashcard</p>
             </div>
-            <div th:if="${@perm.isOwnerOrAdmin(session.loggedInUser, deck)}">
+            <div>
                 <a th:href="@{/decks/create}" class="btn btn-success text-white">
                     <i class="fas fa-plus me-2"></i>Thêm bộ thẻ
                 </a>
@@ -87,7 +87,7 @@
                     <div class="col-12 text-center text-muted">
                         Bạn chưa có bộ thẻ nào.
                     </div>
-                    <a id="createDeckLink" href="/decks/create?" class="btn btn-primary">
+                    <a id="createDeckLink" href="/decks/create?" class="btn btn-primary" th:if="${session.loggedInUser != null}">
                         <i class="fas fa-plus me-2"></i>Tạo bộ thẻ đầu tiên
                     </a>
                 </div>
