@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Làm bài thi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body,
+        .quizlet-attempt,
+        .quizlet-attempt * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+        }
+
+        .quizlet-attempt {
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 28px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+            padding: 48px 48px 36px 48px;
+            max-width: 1200px;
+        }
+
+        @media (max-width: 900px) {
+            .quizlet-attempt {
+                padding: 24px 8px 16px 8px;
+            }
+        }
+
+        .quizlet-attempt .timer {
+            font-size: 24px;
+            color: #0071e3;
+            font-weight: 600;
+            margin-bottom: 32px;
+        }
+
+        .quizlet-attempt .question {
+            margin-bottom: 32px;
+            padding: 24px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .quizlet-attempt .options {
+            margin-top: 16px;
+        }
+
+        .quizlet-attempt .option {
+            display: block;
+            margin: 12px 0;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quizlet-attempt .option:hover {
+            border-color: #0071e3;
+            background: #f8f9fa;
+        }
+
+        .quizlet-attempt .option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .quizlet-attempt button,
+        .quizlet-attempt input[type="submit"] {
+            background: transparent;
+            color: #0071e3;
+            border: 2px solid #b3d4fc;
+            border-radius: 22px;
+            padding: 10px 28px;
+            font-weight: 600;
+            font-size: 17px;
+            text-decoration: none;
+            box-shadow: none;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        .quizlet-attempt button.btn-success,
+        .quizlet-attempt input.btn-success[type="submit"] {
+            color: #34c759;
+            border-color: #b7f5c9;
+        }
+
+        .quizlet-attempt button.btn-primary,
+        .quizlet-attempt input.btn-primary[type="submit"] {
+            color: #0071e3;
+            border-color: #b3d4fc;
+        }
+
+        .quizlet-attempt button:hover,
+        .quizlet-attempt input[type="submit"]:hover {
+            background: #f0f8ff;
+            color: #005bb5;
+            border-color: #0071e3;
+        }
+
+        .quizlet-attempt button.btn-success:hover,
+        .quizlet-attempt input.btn-success[type="submit"]:hover {
+            color: #248a3d;
+            border-color: #34c759;
+            background: #eafff2;
+        }
+
+        .quizlet-attempt button.btn-primary:hover,
+        .quizlet-attempt input.btn-primary[type="submit"]:hover {
+            color: #005bb5;
+            border-color: #0071e3;
+            background: #f0f8ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="quizlet-attempt">
+        <h2 th:text="${exam.title}"></h2>
+        <div class="mb-3" style="font-size:16px;color:#555;">
+            <span><b>Người làm bài:</b> <span th:text="${attempt.userId}"></span></span>
+            <span style="margin-left:24px;"><b>Thời gian bắt đầu:</b> <span id="startTime"></span></span>
+        </div>
+        <div class="timer">
+            <span id="timer"></span>
+        </div>
+        <form th:action="@{'/exams/attempt/' + ${attempt.id} + '/submit'}" method="post">
+            <input type="hidden" id="remainingTime" name="remainingTime" value="">
+            <div th:each="question, qStat : ${exam.questions}" class="question">
+                <h5 th:text="${qStat.count + '. ' + question.content}"></h5>
+                <div class="options">
+                    <label th:each="option : ${question.options}" class="option">
+                        <input type="radio" th:name="'answer_' + ${question.id}" th:value="${option.id}" required>
+                        <span th:text="${option.content}"></span>
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                Nộp bài
+            </button>
+        </form>
+    </div>
+
+    <script th:inline="javascript">
+        // Đếm ngược thời gian và tính thời gian bắt đầu
+        const duration = /*[[${exam.duration}]]*/ 0;
+        let timeLeft = duration * 60;
+
+        // Lấy thời gian hiện tại
+        const now = new Date();
+
+        // Tính thời gian bắt đầu = thời gian hiện tại - thời gian đã trôi qua
+        const startTime = new Date(now.getTime() - (duration * 60 - timeLeft) * 1000);
+
+        // Format thời gian bắt đầu
+        function formatDateTime(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        }
+
+        // Hiển thị thời gian bắt đầu
+        document.getElementById('startTime').textContent = formatDateTime(startTime);
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent =
+                `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+            // Cập nhật remainingTime
+            document.getElementById('remainingTime').value = timeLeft;
+
+            if (timeLeft <= 0) {
+                document.querySelector('form').submit();
+            } else {
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            }
+        }
+
+        updateTimer();
+    </script>
+</body>
+
+</html>

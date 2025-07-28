@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch sử làm bài - <span th:text="${exam != null ? exam.title : 'Không tìm thấy'}"></span></title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body,
+        .quizlet-history,
+        .quizlet-history * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+        }
+
+        .quizlet-history {
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 28px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+            padding: 48px 48px 36px 48px;
+            max-width: 1200px;
+        }
+
+        .quizlet-history h2 {
+            color: #222;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 18px;
+        }
+
+        .quizlet-history .info {
+            margin-bottom: 24px;
+            color: #666;
+            font-size: 17px;
+        }
+
+        .quizlet-history .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .quizlet-history .actions a,
+        .quizlet-history .actions button {
+            background: #0071e3;
+            color: #fff;
+            border-radius: 22px;
+            padding: 10px 28px;
+            font-weight: 600;
+            font-size: 17px;
+            border: none;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        .quizlet-history .actions a:hover,
+        .quizlet-history .actions button:hover {
+            background: #005bb5;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+        }
+
+        .quizlet-history .btn-success {
+            background: #34c759 !important;
+        }
+
+        .quizlet-history .btn-success:hover {
+            background: #248a3d !important;
+        }
+
+        .quizlet-history .btn-success i {
+            margin-right: 6px;
+        }
+
+        .quizlet-history table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+            margin-top: 32px;
+        }
+
+        .quizlet-history th,
+        .quizlet-history td {
+            background: #fff;
+            border: none;
+            padding: 18px 16px;
+            border-radius: 14px;
+            font-size: 16px;
+        }
+
+        .quizlet-history th {
+            background: #f8f9fa;
+            color: #666;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .quizlet-history tr {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .quizlet-history .score {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .quizlet-history .score.high {
+            color: #34c759;
+        }
+
+        .quizlet-history .score.medium {
+            color: #ff9500;
+        }
+
+        .quizlet-history .score.low {
+            color: #ff3b30;
+        }
+
+        .quizlet-history .stats {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .quizlet-history .stats h4 {
+            color: #222;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .quizlet-history .stats .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .quizlet-history .stats .stat-item .value {
+            font-weight: 600;
+            color: #0071e3;
+        }
+
+        @media (max-width: 900px) {
+            .quizlet-history {
+                padding: 24px 8px 16px 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-brain me-2"></i>Flashcard App
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/decks">Bộ thẻ</a></li>
+
+                    <li th:if="${session.loggedInUser == null}" class="nav-item">
+                        <a class="nav-link" href="/login">Đăng nhập</a>
+                    </li>
+                    <li th:if="${session.loggedInUser == null}" class="nav-item">
+                        <a class="nav-link" href="/signup">Đăng ký</a>
+                    </li>
+
+                    <li th:if="${session.loggedInUser != null}" class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Xin chào, <span th:text="${session.loggedInUser.username}">User</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/users/profile">Thông tin cá nhân</a></li>
+                            <li><a class="dropdown-item" href="/logout">Đăng xuất</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Nội dung trang -->
+    <main style="min-height:90vh;">
+        <div class="container">
+            <div class="quizlet-history">
+                <h2>Lịch sử làm bài: <span th:text="${exam != null ? exam.title : 'Không tìm thấy'}"></span></h2>
+
+                <!-- Thông báo lỗi khi không tìm thấy exam -->
+                <div th:if="${exam == null}" class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Lỗi:</strong> Không tìm thấy đề thi hoặc bạn không có quyền truy cập.
+                    <br>
+                    <a href="/exams" class="btn btn-primary mt-2">
+                        <i class="fas fa-arrow-left"></i> Quay lại danh sách đề thi
+                    </a>
+                </div>
+
+                <div class="info" th:if="${exam != null}">
+                    <span><b>Mã đề:</b> <span th:text="${exam.code}"></span></span>
+                    <span><b>Tổng số câu:</b> <span th:text="${exam.totalQuestions}"></span></span>
+                    <span><b>Số lượt làm:</b> <span th:text="${attempts.size()}"></span></span>
+                </div>
+
+                <div class="actions" th:if="${exam != null}">
+                    <a th:href="@{'/exams/' + ${exam.id}}" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i> Quay lại đề thi
+                    </a>
+                    <a th:href="@{'/exams/' + ${exam.id} + '/export-results'}" class="btn btn-success">
+                        <i class="fas fa-download"></i> Xuất bảng điểm
+                    </a>
+                </div>
+
+                <!-- Thống kê tổng quan -->
+                <div class="stats" th:if="${exam != null and !attempts.isEmpty()}">
+                    <h4>Thống kê tổng quan</h4>
+                    <div class="stat-item">
+                        <span>Tổng số học sinh tham gia:</span>
+                        <span class="value" th:text="${attempts.size()}"></span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Điểm trung bình:</span>
+                        <span class="value"
+                            th:text="${attempts != null and !attempts.isEmpty() ? #numbers.formatDecimal(T(com.quizletclone.flashcard.controller.exam.ExamMvcController).calculateAverageScore(attempts), 1, 2) : 0}"></span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Số câu đúng trung bình:</span>
+                        <span class="value"
+                            th:text="${attempts != null and !attempts.isEmpty() ? #numbers.formatDecimal(T(com.quizletclone.flashcard.controller.exam.ExamMvcController).calculateAverageCorrect(attempts), 1, 2) : 0}"></span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Tỷ lệ đúng trung bình:</span>
+                        <span class="value"
+                            th:text="${attempts != null and !attempts.isEmpty() ? #numbers.formatDecimal(T(com.quizletclone.flashcard.controller.exam.ExamMvcController).calculateAveragePercentage(attempts, exam != null ? exam.totalQuestions : 0), 1, 2) + '%' : '0%'}"></span>
+                    </div>
+                </div>
+
+                <h3 class="mt-4" th:if="${exam != null}">Danh sách bài làm</h3>
+                <div th:if="${exam != null and attempts.isEmpty()}" class="text-center text-muted py-5">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <p>Chưa có học sinh nào làm bài thi này.</p>
+                </div>
+
+                <table th:if="${exam != null and !attempts.isEmpty()}" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên học sinh</th>
+                            <th>Điểm số</th>
+                            <th>Số câu đúng</th>
+                            <th>Tỷ lệ đúng</th>
+                            <th>Thời gian bắt đầu</th>
+                            <th>Thời gian nộp bài</th>
+                            <th>Thời gian làm bài</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="attempt, iter : ${attempts}">
+                            <td th:text="${iter.index + 1}"></td>
+                            <td th:text="${attempt.userId}"></td>
+                            <td>
+                                <span class="score" th:text="${attempt.score}"
+                                    th:class="${attempt.score >= 8 ? 'high' : (attempt.score >= 5 ? 'medium' : 'low')}">
+                                </span>
+                            </td>
+                            <td th:text="${attempt.correctCount + '/' + (exam != null ? exam.totalQuestions : 0)}"></td>
+                            <td>
+                                <span
+                                    th:text="${#numbers.formatDecimal((attempt.correctCount * 100.0 / (exam != null ? exam.totalQuestions : 1)), 1, 2) + '%'}"></span>
+                            </td>
+                            <td
+                                th:text="${attempt.submittedAt != null and exam != null and exam.duration > 0 and attempt.remainingTime != null
+                                    ? #temporals.format(attempt.submittedAt.minusMinutes(exam.duration - attempt.remainingTime), 'dd/MM/yyyy HH:mm:ss')
+                                    : (attempt.startedAt != null ? #temporals.format(attempt.startedAt, 'dd/MM/yyyy HH:mm:ss') : 'N/A')}">
+                            </td>
+                            <td
+                                th:text="${attempt.submittedAt != null ? #temporals.format(attempt.submittedAt, 'dd/MM/yyyy HH:mm:ss') : 'N/A'}">
+                            </td>
+                            <td th:text="${attempt.submittedAt != null and ((attempt.remainingTime != null and exam != null and exam.duration > 0) or attempt.startedAt != null)
+                                    ? T(java.time.Duration).between(
+                                        (attempt.remainingTime != null and exam != null and exam.duration > 0)
+                                            ? attempt.submittedAt.minusMinutes(exam.duration - attempt.remainingTime)
+                                            : attempt.startedAt,
+                                        attempt.submittedAt
+                                    ).toMinutes() >= 60
+                                        ? (T(java.time.Duration).between((attempt.remainingTime != null and exam != null and exam.duration > 0)
+                                            ? attempt.submittedAt.minusMinutes(exam.duration - attempt.remainingTime)
+                                            : attempt.startedAt, attempt.submittedAt).toHours()) + 'h '
+                                            + (T(java.time.Duration).between((attempt.remainingTime != null and exam != null and exam.duration > 0)
+                                            ? attempt.submittedAt.minusMinutes(exam.duration - attempt.remainingTime)
+                                            : attempt.startedAt, attempt.submittedAt).toMinutesPart()) + 'm'
+                                        : (T(java.time.Duration).between((attempt.remainingTime != null and exam != null and exam.duration > 0)
+                                            ? attempt.submittedAt.minusMinutes(exam.duration - attempt.remainingTime)
+                                            : attempt.startedAt, attempt.submittedAt).toMinutes()) + 'm'
+                                    : 'N/A'}">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 Flashcard App. Được phát triển bởi Trương Hoàng Huy</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+
+</html>
