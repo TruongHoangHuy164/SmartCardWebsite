@@ -12,6 +12,7 @@ public class ExamOption {
     @ManyToOne
     @JoinColumn(name = "question_id")
     private ExamQuestion question;
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String content;
     private boolean isCorrect;
     // getter, setter

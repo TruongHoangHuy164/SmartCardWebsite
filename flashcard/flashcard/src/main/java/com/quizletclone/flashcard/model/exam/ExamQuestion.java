@@ -13,6 +13,7 @@ public class ExamQuestion {
     @ManyToOne
     @JoinColumn(name = "exam_id")
     private Exam exam;
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String content;
     private int questionOrder;
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
