@@ -14,6 +14,7 @@ public class ExamAttempt {
     @JoinColumn(name = "exam_id")
     private Exam exam;
     @Column(columnDefinition = "NVARCHAR(MAX)")
+   
     private String userId;
     private LocalDateTime startedAt;
     private LocalDateTime submittedAt;
