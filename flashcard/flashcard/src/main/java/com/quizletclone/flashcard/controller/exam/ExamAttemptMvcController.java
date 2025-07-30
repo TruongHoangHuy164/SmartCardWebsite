@@ -4,6 +4,7 @@ import com.quizletclone.flashcard.model.exam.Exam;
 import com.quizletclone.flashcard.model.exam.ExamAttempt;
 import com.quizletclone.flashcard.service.exam.ExamAttemptService;
 import com.quizletclone.flashcard.service.exam.ExamService;
+import com.quizletclone.flashcard.service.exam.ExamAttemptAnswerService;
 import com.quizletclone.flashcard.model.User;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class ExamAttemptMvcController {
     private ExamService examService;
     @Autowired
     private ExamAttemptService examAttemptService;
+    @Autowired
+    private ExamAttemptAnswerService examAttemptAnswerService;
 
     @GetMapping("/{examId}")
     public String startAttempt(@PathVariable Long examId, Model model, HttpSession session) {
@@ -107,8 +110,7 @@ public class ExamAttemptMvcController {
         model.addAttribute("correctCount", attempt.getCorrectCount());
         model.addAttribute("total", attempt.getExam().getTotalQuestions());
         // Nếu có service lấy danh sách kết quả từng câu hỏi:
-        // model.addAttribute("results",
-        // examAttemptAnswerService.getAnswersByAttempt(attempt));
+        model.addAttribute("results", examAttemptAnswerService.getAnswersByAttempt(attempt));
         return "exam/attempt_result";
     }
 

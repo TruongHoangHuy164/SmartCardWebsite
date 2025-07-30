@@ -32,8 +32,8 @@ public class ExamMvcController {
     @Autowired
     private ExamQuestionService examQuestionService;
 
-    @Autowired
-    private ExamExportService examExportService;
+     @Autowired
+     private ExamExportService examExportService;
 
     @Autowired
     private ExamAttemptRepository examAttemptRepository;
