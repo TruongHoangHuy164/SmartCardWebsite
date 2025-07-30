@@ -4,7 +4,7 @@ import com.quizletclone.flashcard.model.exam.Exam;
 import com.quizletclone.flashcard.service.exam.ExamService;
 import com.quizletclone.flashcard.model.User;
 import com.quizletclone.flashcard.service.exam.ExamQuestionService;
-//import com.quizletclone.flashcard.service.exam.ExamExportService;
+import com.quizletclone.flashcard.service.exam.ExamExportService;
 import com.quizletclone.flashcard.repository.exam.ExamAttemptRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +32,8 @@ public class ExamMvcController {
     @Autowired
     private ExamQuestionService examQuestionService;
 
-    // @Autowired
-    // private ExamExportService examExportService;
+    @Autowired
+    private ExamExportService examExportService;
 
     @Autowired
     private ExamAttemptRepository examAttemptRepository;
@@ -127,38 +127,38 @@ public class ExamMvcController {
         return res;
     }
 
-    // @GetMapping("/{id}/export-results")
-    // public ResponseEntity<InputStreamResource> exportExamResults(@PathVariable Long id, HttpSession session) {
-    //     User user = (User) session.getAttribute("loggedInUser");
-    //     if (user == null) {
-    //         return ResponseEntity.status(401).build();
-    //     }
+    @GetMapping("/{id}/export-results")
+    public ResponseEntity<InputStreamResource> exportExamResults(@PathVariable Long id, HttpSession session) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
 
-    //     Optional<Exam> examOpt = examService.getExamById(id);
-    //     if (examOpt.isEmpty()) {
-    //         return ResponseEntity.notFound().build();
-    //     }
+        Optional<Exam> examOpt = examService.getExamById(id);
+        if (examOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
 
-    //     Exam exam = examOpt.get();
-    //     // Kiểm tra quyền - chỉ người tạo đề mới có quyền xuất bảng điểm
-    //     if (!exam.getCreatedBy().equals(user.getUsername())) {
-    //         return ResponseEntity.status(403).build();
-    //     }
+        Exam exam = examOpt.get();
+        // Kiểm tra quyền - chỉ người tạo đề mới có quyền xuất bảng điểm
+        if (!exam.getCreatedBy().equals(user.getUsername())) {
+            return ResponseEntity.status(403).build();
+        }
 
-    //     try {
-    //         InputStreamResource resource = new InputStreamResource(examExportService.exportExamResults(exam));
+        try {
+            InputStreamResource resource = new InputStreamResource(examExportService.exportExamResults(exam));
 
-    //         String filename = "bang-diem-" + exam.getTitle().replaceAll("[^a-zA-Z0-9\\s-]", "") + ".xlsx";
+            String filename = "bang-diem-" + exam.getTitle().replaceAll("[^a-zA-Z0-9\\s-]", "") + ".xlsx";
 
-    //         return ResponseEntity.ok()
-    //                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-    //                 .contentType(MediaType
-    //                         .parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-    //                 .body(resource);
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(500).build();
-    //     }
-    // }
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                    .contentType(MediaType
+                            .parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
 
     @GetMapping("/{id}/attempt-history")
     public String examAttemptHistory(@PathVariable Long id, Model model, HttpSession session) {
