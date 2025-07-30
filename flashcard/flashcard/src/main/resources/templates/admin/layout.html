@@ -46,6 +46,11 @@
                             <a class="nav-link" href="/admin/decks">Quản lý bộ thẻ</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link [[${#httpServletRequest.requestURI.startsWith('/admin/exams') ? 'active' : ''}]]" href="/admin/exams">
+                                <i class="fas fa-file-alt me-1"></i>Quản lý bộ đề
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="/admin/import-pdf">Thêm thẻ từ file</a>
                         </li>
                         <li class="nav-item">

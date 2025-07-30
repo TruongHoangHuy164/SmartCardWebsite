@@ -13,6 +13,9 @@ import java.util.Random;
 
 @Service
 public class ExamService {
+    public List<Exam> getAllExams() {
+        return examRepository.findAll();
+    }
     @Autowired
     private ExamRepository examRepository;
     @Autowired

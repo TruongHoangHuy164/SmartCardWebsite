@@ -10,12 +10,15 @@ public class Exam {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String title;
+      @Column(columnDefinition = "NVARCHAR(MAX)")
     private String description;
-    @Column(unique = true)
+    @Column(unique = true, columnDefinition = "NVARCHAR(MAX)")
     private String code;
     private int duration; // thời gian làm bài (phút)
     private boolean isPublic;
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String createdBy;
     private LocalDateTime createdAt;
     private int totalQuestions;
