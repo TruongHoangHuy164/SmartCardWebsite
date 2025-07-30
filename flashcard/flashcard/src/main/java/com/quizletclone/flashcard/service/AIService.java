@@ -45,8 +45,8 @@ public class AIService {
             JSONArray messages = new JSONArray().put(userMessage);
 
             JSONObject requestBody = new JSONObject();
-            requestBody.put("model", "google/gemma-7b-it"); // hoặc model bạn muốn requestBody.put("messages",
-                                                            // messages);
+            requestBody.put("model", "mistralai/mistral-7b-instruct:free");
+            requestBody.put("messages", messages); // BỔ SUNG DÒNG NÀY
 
             HttpEntity<String> request = new HttpEntity<>(requestBody.toString(), headers);
             ResponseEntity<String> response = restTemplate.postForEntity(API_URL, request, String.class);
@@ -67,31 +67,48 @@ public class AIService {
     }
 
     public List<Flashcard> generateFlashcards(String prompt, int count) {
-    List<Flashcard> list = new ArrayList<>();
-    String aiPrompt = "Bạn là một chuyên gia giáo dục. "
-        + "Hãy tìm kiếm và liệt kê " + count + " thuật ngữ quan trọng, phổ biến hoặc liên quan nhất đến chủ đề: '" + prompt + "'. "
-        + "Với mỗi thuật ngữ, hãy cung cấp một định nghĩa ngắn gọn, dễ hiểu, đúng với chủ đề, bằng tiếng Việt. "
-        + "Trả về duy nhất một chuỗi JSON dạng: "
-        + "[{\"term\": \"...\", \"definition\": \"...\"}, ...] "
-        + "Không giải thích gì thêm, chỉ trả về JSON.";
+        List<Flashcard> list = new ArrayList<>();
+        String aiPrompt = "Hãy tạo " + count + " từ liên về chủ đề '" + prompt +
+                "'. Mỗi flashcard là một đối tượng JSON gồm: " +
+                "\"term\" , " +
+                "\"definition\" (giải thích ngắn về term ). " +
+                "Chỉ trả về JSON dạng: [{\"term\": \"...\", \"definition\": \"...\"}, ...]. Không thêm bất kỳ mô tả nào khác.";
 
-    String aiResult = ask(aiPrompt);
+        String aiResult = ask(aiPrompt);
 
-    try {
-        ObjectMapper mapper = new ObjectMapper();
-        list = Arrays.asList(mapper.readValue(aiResult, Flashcard[].class));
-    } catch (Exception e) {
-        e.printStackTrace();
-        // Fallback: sinh flashcard mặc định nếu AI fail
-        while (list.size() < count) {
-            Flashcard fc = new Flashcard();
-            fc.setTerm(prompt + " - Thuật ngữ " + (list.size() + 1));
-            fc.setDefinition("Định nghĩa cho " + prompt + " số " + (list.size() + 1));
-            list.add(fc);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Flashcard[] cards = mapper.readValue(aiResult, Flashcard[].class);
+            for (int i = 0; i < Math.min(cards.length, count); i++) {
+                list.add(cards[i]);
+            }
+            for (int i = list.size(); i < count; i++) {
+                String term = ask(
+                        "Hãy tạo một thuật ngữ (chỉ là một từ hoặc cụm từ ngắn, không kèm giải thích) liên quan đến '"
+                                + prompt + "', chỉ trả về thuật ngữ.");
+                String definition = ask(
+                        "Định nghĩa ngắn gọn cho '" + term + "' về chủ đề '" + prompt + "', chỉ trả về định nghĩa.");
+                Flashcard fc = new Flashcard();
+                fc.setTerm(term.trim());
+                fc.setDefinition(definition.trim());
+                list.add(fc);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            for (int i = 1; i <= count; i++) {
+                String term = ask(
+                        "Hãy tạo một thuật ngữ (chỉ là một từ hoặc cụm từ ngắn, không kèm giải thích) liên quan đến '"
+                                + prompt + "', chỉ trả về thuật ngữ.");
+                String definition = ask(
+                        "Định nghĩa ngắn gọn cho '" + term + "' về chủ đề '" + prompt + "', chỉ trả về định nghĩa.");
+                Flashcard fc = new Flashcard();
+                fc.setTerm(term.trim());
+                fc.setDefinition(definition.trim());
+                list.add(fc);
+            }
         }
+        return list;
     }
-    return list;
-}
 
     public String generateQuestionFromFlashcard(String term, String definition) {
         String prompt = "Dựa trên flashcard sau, hãy tạo ra một câu hỏi và câu trả lời rõ ràng:\n\n"
