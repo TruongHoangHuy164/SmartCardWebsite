@@ -2,6 +2,7 @@ package com.quizletclone.flashcard.controller.Admin;
 
 import com.quizletclone.flashcard.service.FlashcardService;
 import com.quizletclone.flashcard.service.AIService;
+import com.quizletclone.flashcard.service.DeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +25,9 @@ public class FlashcardAdminController {
     private FlashcardService flashcardService;
     @Autowired
     private AIService aiService;
+
+    @Autowired
+    private DeckService deckService;
 
     @GetMapping("/admin/flashcards")
     public String manageFlashcards(Model model, HttpSession session) {
@@ -166,14 +170,27 @@ public class FlashcardAdminController {
         return false;
     }
 
+    // @GetMapping("/admin/flashcards/ai-add")
+    // public String showAIAddFlashcardForm(@RequestParam("deckId") Integer deckId, Model model, HttpSession session) {
+    //     if (!isAdmin(session))
+    //         return "error/404";
+    //     model.addAttribute("deckId", deckId);
+    //     return "admin/decks/flashcards/ai-add";
+    // }
+
     @GetMapping("/admin/flashcards/ai-add")
     public String showAIAddFlashcardForm(@RequestParam("deckId") Integer deckId, Model model, HttpSession session) {
         if (!isAdmin(session))
             return "error/404";
-        model.addAttribute("deckId", deckId);
+
+        var deckOpt = deckService.getDeckById(deckId);
+        if (deckOpt.isEmpty()) {
+            return "error/404";
+        }
+        Deck deck = deckOpt.get();
+        model.addAttribute("deck", deck);
         return "admin/decks/flashcards/ai-add";
     }
-
     @PostMapping("/admin/flashcards/ai-add")
     public String aiAddFlashcards(@RequestParam("deckId") Integer deckId,
             @RequestParam("prompt") String prompt,

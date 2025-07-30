@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -8,10 +10,10 @@
 <div class="container mt-4">
     <h3>Thêm flashcard bằng AI</h3>
     <form th:action="@{/admin/flashcards/ai-add}" method="post">
-        <input type="hidden" name="deckId" th:value="${deckId}" />
+        <input type="hidden" name="deckId" th:value="${deck.id}" />
         <div class="mb-3">
             <label>Chủ đề hoặc mô tả:</label>
-            <input type="text" name="prompt" class="form-control" required>
+            <input type="text" name="prompt" th:value="${deck.title}" class="form-control" required>
         </div>
         <div class="mb-3">
             <label>Số lượng flashcard:</label>
