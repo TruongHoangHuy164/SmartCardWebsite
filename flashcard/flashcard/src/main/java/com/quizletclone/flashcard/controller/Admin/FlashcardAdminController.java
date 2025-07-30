@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
+import com.quizletclone.flashcard.model.Deck;
 import com.quizletclone.flashcard.model.Flashcard;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +36,8 @@ public class FlashcardAdminController {
 
     @GetMapping("/admin/flashcards/add")
     public String showAddFlashcardForm(@RequestParam("deckId") Integer deckId, Model model, HttpSession session) {
-        if (!isAdmin(session)) return "error/404";
+        if (!isAdmin(session))
+            return "error/404";
         Flashcard flashcard = new Flashcard();
         com.quizletclone.flashcard.model.Deck deck = new com.quizletclone.flashcard.model.Deck();
         deck.setId(deckId);
@@ -45,10 +48,11 @@ public class FlashcardAdminController {
     }
 
     @PostMapping("/admin/flashcards/add")
-    public String addFlashcard(@ModelAttribute("flashcard") Flashcard flashcard, 
-                             @RequestParam("imageFile") MultipartFile imageFile,
-                             Model model, HttpSession session) {
-        if (!isAdmin(session)) return "error/404";
+    public String addFlashcard(@ModelAttribute("flashcard") Flashcard flashcard,
+            @RequestParam("imageFile") MultipartFile imageFile,
+            Model model, HttpSession session) {
+        if (!isAdmin(session))
+            return "error/404";
         Integer deckId = flashcard.getDeck().getId();
         // Text moderation
         if (aiService.isSensitiveText(flashcard.getTerm()) || aiService.isSensitiveText(flashcard.getDefinition())) {
@@ -81,9 +85,11 @@ public class FlashcardAdminController {
 
     @GetMapping("/admin/flashcards/edit/{id}")
     public String showEditFlashcardForm(@PathVariable Integer id, Model model, HttpSession session) {
-        if (!isAdmin(session)) return "error/404";
+        if (!isAdmin(session))
+            return "error/404";
         var flashcardOpt = flashcardService.getFlashcardById(id);
-        if (flashcardOpt.isEmpty()) return "error/404";
+        if (flashcardOpt.isEmpty())
+            return "error/404";
         Flashcard flashcard = flashcardOpt.get();
         model.addAttribute("flashcard", flashcard);
         model.addAttribute("deckId", flashcard.getDeck().getId());
@@ -91,11 +97,12 @@ public class FlashcardAdminController {
     }
 
     @PostMapping("/admin/flashcards/edit/{id}")
-    public String editFlashcard(@PathVariable Integer id, 
-                                @ModelAttribute("flashcard") Flashcard flashcard, 
-                                @RequestParam("imageFile") MultipartFile imageFile,
-                                Model model, HttpSession session) {
-        if (!isAdmin(session)) return "error/404";
+    public String editFlashcard(@PathVariable Integer id,
+            @ModelAttribute("flashcard") Flashcard flashcard,
+            @RequestParam("imageFile") MultipartFile imageFile,
+            Model model, HttpSession session) {
+        if (!isAdmin(session))
+            return "error/404";
         Integer deckId = flashcard.getDeck().getId();
         // Text moderation
         if (aiService.isSensitiveText(flashcard.getTerm()) || aiService.isSensitiveText(flashcard.getDefinition())) {
@@ -128,20 +135,24 @@ public class FlashcardAdminController {
 
     @GetMapping("/admin/flashcards/delete/{id}")
     public String showDeleteConfirmation(@PathVariable Integer id, Model model, HttpSession session) {
-        if (!isAdmin(session)) return "error/404";
+        if (!isAdmin(session))
+            return "error/404";
         var flashcardOpt = flashcardService.getFlashcardById(id);
-        if (flashcardOpt.isEmpty()) return "error/404";
+        if (flashcardOpt.isEmpty())
+            return "error/404";
         Flashcard flashcard = flashcardOpt.get();
         model.addAttribute("flashcard", flashcard);
         model.addAttribute("deckId", flashcard.getDeck().getId());
         return "admin/decks/flashcards/delete";
     }
-    
+
     @PostMapping("/admin/flashcards/delete/{id}")
     public String deleteFlashcard(@PathVariable Integer id, HttpSession session) {
-        if (!isAdmin(session)) return "error/404";
+        if (!isAdmin(session))
+            return "error/404";
         var flashcardOpt = flashcardService.getFlashcardById(id);
-        if (flashcardOpt.isEmpty()) return "error/404";
+        if (flashcardOpt.isEmpty())
+            return "error/404";
         Integer deckId = flashcardOpt.get().getDeck().getId();
         flashcardService.deleteFlashcard(id);
         return "redirect:/admin/decks/view/" + deckId;
@@ -154,4 +165,29 @@ public class FlashcardAdminController {
         }
         return false;
     }
-} 
+
+    @GetMapping("/admin/flashcards/ai-add")
+    public String showAIAddFlashcardForm(@RequestParam("deckId") Integer deckId, Model model, HttpSession session) {
+        if (!isAdmin(session))
+            return "error/404";
+        model.addAttribute("deckId", deckId);
+        return "admin/decks/flashcards/ai-add";
+    }
+
+    @PostMapping("/admin/flashcards/ai-add")
+    public String aiAddFlashcards(@RequestParam("deckId") Integer deckId,
+            @RequestParam("prompt") String prompt,
+            @RequestParam(value = "count", defaultValue = "5") int count,
+            Model model, HttpSession session) {
+        if (!isAdmin(session))
+            return "error/404";
+        var deck = new Deck();
+        deck.setId(deckId);
+        var aiFlashcards = aiService.generateFlashcards(prompt, count);
+        for (var fc : aiFlashcards) {
+            fc.setDeck(deck);
+            flashcardService.saveFlashcard(fc);
+        }
+        return "redirect:/admin/decks/view/" + deckId;
+    }
+}

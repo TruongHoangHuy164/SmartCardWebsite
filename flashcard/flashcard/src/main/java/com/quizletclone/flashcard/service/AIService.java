@@ -15,6 +15,12 @@ import java.io.IOException;
 import java.util.Base64;
 import org.springframework.web.client.HttpClientErrorException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.quizletclone.flashcard.model.Flashcard;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Service
 public class AIService {
 
@@ -30,7 +36,7 @@ public class AIService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", apiKey); // lấy từ application.properties
-            headers.set("HTTP-Referer", "http://localhost:8080");
+            headers.set("HTTP-Referer", "http://localhost:8088");
 
             JSONObject userMessage = new JSONObject();
             userMessage.put("role", "user");
@@ -39,8 +45,8 @@ public class AIService {
             JSONArray messages = new JSONArray().put(userMessage);
 
             JSONObject requestBody = new JSONObject();
-            requestBody.put("model", "mistralai/mistral-7b-instruct");
-            requestBody.put("messages", messages);
+            requestBody.put("model", "google/gemma-7b-it"); // hoặc model bạn muốn requestBody.put("messages",
+                                                            // messages);
 
             HttpEntity<String> request = new HttpEntity<>(requestBody.toString(), headers);
             ResponseEntity<String> response = restTemplate.postForEntity(API_URL, request, String.class);
@@ -60,6 +66,33 @@ public class AIService {
         }
     }
 
+    public List<Flashcard> generateFlashcards(String prompt, int count) {
+    List<Flashcard> list = new ArrayList<>();
+    String aiPrompt = "Bạn là một chuyên gia giáo dục. "
+        + "Hãy tìm kiếm và liệt kê " + count + " thuật ngữ quan trọng, phổ biến hoặc liên quan nhất đến chủ đề: '" + prompt + "'. "
+        + "Với mỗi thuật ngữ, hãy cung cấp một định nghĩa ngắn gọn, dễ hiểu, đúng với chủ đề, bằng tiếng Việt. "
+        + "Trả về duy nhất một chuỗi JSON dạng: "
+        + "[{\"term\": \"...\", \"definition\": \"...\"}, ...] "
+        + "Không giải thích gì thêm, chỉ trả về JSON.";
+
+    String aiResult = ask(aiPrompt);
+
+    try {
+        ObjectMapper mapper = new ObjectMapper();
+        list = Arrays.asList(mapper.readValue(aiResult, Flashcard[].class));
+    } catch (Exception e) {
+        e.printStackTrace();
+        // Fallback: sinh flashcard mặc định nếu AI fail
+        while (list.size() < count) {
+            Flashcard fc = new Flashcard();
+            fc.setTerm(prompt + " - Thuật ngữ " + (list.size() + 1));
+            fc.setDefinition("Định nghĩa cho " + prompt + " số " + (list.size() + 1));
+            list.add(fc);
+        }
+    }
+    return list;
+}
+
     public String generateQuestionFromFlashcard(String term, String definition) {
         String prompt = "Dựa trên flashcard sau, hãy tạo ra một câu hỏi và câu trả lời rõ ràng:\n\n"
                 + "Thuật ngữ: " + term + "\n"
@@ -70,7 +103,8 @@ public class AIService {
     }
 
     public boolean isSensitiveText(String text) {
-        String prompt = "Hãy kiểm tra nội dung sau có chứa từ ngữ nhạy cảm, tục tĩu, hoặc vi phạm thuần phong mỹ tục bằng tiếng Việt hoặc tiếng Anh không? Nếu có, chỉ trả lời 'YES', nếu không chỉ trả lời 'NO'. Nội dung: " + text;
+        String prompt = "Hãy kiểm tra nội dung sau có chứa từ ngữ nhạy cảm, tục tĩu, hoặc vi phạm thuần phong mỹ tục bằng tiếng Việt hoặc tiếng Anh không? Nếu có, chỉ trả lời 'YES', nếu không chỉ trả lời 'NO'. Nội dung: "
+                + text;
         String result = ask(prompt);
         return result.trim().toUpperCase().contains("YES");
     }
@@ -93,8 +127,9 @@ public class AIService {
             // Create prompt for vision model
             JSONObject textContent = new JSONObject();
             textContent.put("type", "text");
-            textContent.put("text", "Does this image contain nudity, violence, hate speech, or other sensitive content? Answer with only YES or NO.");
-            
+            textContent.put("text",
+                    "Does this image contain nudity, violence, hate speech, or other sensitive content? Answer with only YES or NO.");
+
             JSONObject imageUrlContent = new JSONObject();
             imageUrlContent.put("type", "image_url");
             JSONObject imageUrlData = new JSONObject();
@@ -108,7 +143,7 @@ public class AIService {
             JSONObject userMessage = new JSONObject();
             userMessage.put("role", "user");
             userMessage.put("content", contentArray);
-            
+
             JSONArray messages = new JSONArray().put(userMessage);
 
             JSONObject requestBody = new JSONObject();
@@ -133,10 +168,11 @@ public class AIService {
         } catch (IOException e) {
             // Log error, but don't block user for now
             e.printStackTrace();
-            return false; 
+            return false;
         } catch (HttpClientErrorException e) {
             // Nếu mã lỗi là 400 và message chứa "data_inspection_failed"
-            if (e.getStatusCode() == HttpStatus.BAD_REQUEST && e.getResponseBodyAsString().contains("data_inspection_failed")) {
+            if (e.getStatusCode() == HttpStatus.BAD_REQUEST
+                    && e.getResponseBodyAsString().contains("data_inspection_failed")) {
                 return true; // Ảnh bị từ chối, coi như nhạy cảm
             }
             // Xử lý các lỗi khác (log hoặc throw lại)
