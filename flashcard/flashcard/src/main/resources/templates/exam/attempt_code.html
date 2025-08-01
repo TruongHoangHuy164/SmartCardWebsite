@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Nhập mã đề thi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-5" style="max-width: 500px;">
+        <h3 class="mb-4"><i class="fas fa-key me-2"></i>Nhập mã đề thi để làm bài</h3>
+        <form th:action="@{/exams/attempt/code}" method="post">
+            <div class="mb-3">
+                <label for="examCode" class="form-label">Mã đề thi</label>
+                <input type="text" class="form-control" id="examCode" name="examCode" placeholder="Nhập mã đề thi" required>
+            </div>
+            <button type="submit" class="btn btn-warning"><i class="fas fa-arrow-right me-1"></i>Vào đề thi</button>
+        </form>
+        <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
+    </div>
+</div>
+</body>
+</html>

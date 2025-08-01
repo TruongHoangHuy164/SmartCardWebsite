@@ -133,9 +133,15 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h2>Danh sách đề thi công khai</h2>
                 <div class="actions">
+
+                    <a href="/exams/attempt/code" class="btn btn-warning">
+                        Nhập mã code làm bài
+                    </a>
+
                     <a href="/exams/create" class="btn btn-primary">
                         Tạo đề thi mới
                     </a>
+                    
                     <a th:if="${session.loggedInUser != null}" href="/exams/attempt/history" class="btn btn-info">
                         Lịch sử làm bài
                     </a>
