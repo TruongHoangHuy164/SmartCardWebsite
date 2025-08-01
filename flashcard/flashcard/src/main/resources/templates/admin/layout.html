@@ -40,22 +40,17 @@
                             <a class="nav-link" href="/admin/dashboard"><i class="fas fa-chart-bar me-1"></i>Dashboard thống kê</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/users">Quản lý người dùng</a>
+                            <a class="nav-link" href="/admin/users"><i class="fas fa-users me-1"></i>Quản lý người dùng</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/decks">Quản lý bộ thẻ</a>
+                            <a class="nav-link" href="/admin/decks"><i class="fas fa-layer-group me-1"></i>Quản lý bộ thẻ</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link [[${#httpServletRequest.requestURI.startsWith('/admin/exams') ? 'active' : ''}]]" href="/admin/exams">
                                 <i class="fas fa-file-alt me-1"></i>Quản lý bộ đề
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin/import-pdf">Thêm thẻ từ file</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin/upload">Thêm thẻ mới</a>
-                        </li>
+                        
                     </ul>
                     <span class="navbar-text">
                         <a href="/decks" class="btn btn-primary btn-lg">

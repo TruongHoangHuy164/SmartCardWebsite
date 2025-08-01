@@ -23,6 +23,18 @@ import java.util.List;
 
 @Service
 public class AIService {
+    public List<com.quizletclone.flashcard.dto.AIExamQuestionDTO> analyzeExamQuestions(String text) {
+        String prompt = "Hãy phân tích nội dung sau và trích xuất ra danh sách câu hỏi trắc nghiệm cùng các đáp án. Mỗi câu hỏi là một object JSON gồm: 'content' (nội dung câu hỏi), 'options' (mảng các đáp án, mỗi đáp án gồm 'content' và 'correct' true/false). Chỉ trả về JSON dạng: [{\"content\":\"...\",\"options\":[{\"content\":\"...\",\"correct\":true/false}, ...]}, ...]. Không thêm mô tả nào khác. Nội dung: " + text;
+        String aiResult = ask(prompt);
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            com.quizletclone.flashcard.dto.AIExamQuestionDTO[] questions = mapper.readValue(aiResult, com.quizletclone.flashcard.dto.AIExamQuestionDTO[].class);
+            return java.util.Arrays.asList(questions);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return java.util.Collections.emptyList();
+        }
+    }
 
     @Value("${openrouter.api-key}")
     private String apiKey;

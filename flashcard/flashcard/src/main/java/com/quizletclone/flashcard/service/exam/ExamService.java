@@ -1,3 +1,4 @@
+
 package com.quizletclone.flashcard.service.exam;
 
 import com.quizletclone.flashcard.model.exam.Exam;
@@ -35,7 +36,9 @@ public class ExamService {
         }
         return examRepository.save(exam);
     }
-
+    public Optional<Exam> findByCode(String code) {
+        return examRepository.findByCode(code);
+    }
     private String generateRandomCode(int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder sb = new StringBuilder();
@@ -70,7 +73,7 @@ public class ExamService {
                 .filter(e -> username.equals(e.getCreatedBy()))
                 .toList();
     }
-
+    
     @Transactional
     public void deleteExam(Long id) {
         // Xóa tất cả các attempt liên quan trước

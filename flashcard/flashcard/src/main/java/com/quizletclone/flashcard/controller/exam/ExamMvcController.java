@@ -27,6 +27,67 @@ import com.quizletclone.flashcard.model.exam.ExamAttempt;
 @RequestMapping("/exams")
 public class ExamMvcController {
     @Autowired
+    private com.quizletclone.flashcard.service.AIService aiService;
+    @Autowired
+    private com.quizletclone.flashcard.service.exam.ExamOptionService examOptionService;
+
+    @PostMapping("/{id}/ai-import")
+    public String aiImportExam(@PathVariable Long id, @RequestParam("file") org.springframework.web.multipart.MultipartFile file,
+                               HttpSession session, RedirectAttributes redirectAttributes) {
+        com.quizletclone.flashcard.model.User user = (com.quizletclone.flashcard.model.User) session.getAttribute("loggedInUser");
+        java.util.Optional<com.quizletclone.flashcard.model.exam.Exam> examOpt = examService.getExamById(id);
+        if (examOpt.isEmpty() || user == null || !examOpt.get().getCreatedBy().equals(user.getUsername())) {
+            redirectAttributes.addFlashAttribute("error", "Bạn không có quyền import đề này!");
+            return "redirect:/exams/" + id;
+        }
+        String text = "";
+        try {
+            String filename = file.getOriginalFilename().toLowerCase();
+            if (filename.endsWith(".pdf")) {
+                try (org.apache.pdfbox.pdmodel.PDDocument document = org.apache.pdfbox.pdmodel.PDDocument.load(file.getInputStream())) {
+                    org.apache.pdfbox.text.PDFTextStripper stripper = new org.apache.pdfbox.text.PDFTextStripper();
+                    text = stripper.getText(document);
+                }
+            } else if (filename.endsWith(".doc") || filename.endsWith(".docx")) {
+                org.apache.poi.xwpf.usermodel.XWPFDocument doc = new org.apache.poi.xwpf.usermodel.XWPFDocument(file.getInputStream());
+                StringBuilder sb = new StringBuilder();
+                for (org.apache.poi.xwpf.usermodel.XWPFParagraph p : doc.getParagraphs()) {
+                    sb.append(p.getText()).append("\n");
+                }
+                text = sb.toString();
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Định dạng file không hỗ trợ!");
+                return "redirect:/exams/" + id;
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi đọc file: " + e.getMessage());
+            return "redirect:/exams/" + id;
+        }
+        var questions = aiService.analyzeExamQuestions(text);
+        if (questions.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "AI không phân tích được đề thi hoặc file không đúng định dạng!");
+            return "redirect:/exams/" + id;
+        }
+        com.quizletclone.flashcard.model.exam.Exam exam = examOpt.get();
+        int order = examQuestionService.getQuestionsByExam(exam).size() + 1;
+        for (var qDto : questions) {
+            com.quizletclone.flashcard.model.exam.ExamQuestion question = new com.quizletclone.flashcard.model.exam.ExamQuestion();
+            question.setExam(exam);
+            question.setContent(qDto.getContent());
+            question.setQuestionOrder(order++);
+            question = examQuestionService.addQuestion(question);
+            for (var optDto : qDto.getOptions()) {
+                com.quizletclone.flashcard.model.exam.ExamOption option = new com.quizletclone.flashcard.model.exam.ExamOption();
+                option.setQuestion(question);
+                option.setContent(optDto.getContent());
+                option.setCorrect(optDto.isCorrect());
+                examOptionService.addOption(option);
+            }
+        }
+        redirectAttributes.addFlashAttribute("success", "Đã import thành công " + questions.size() + " câu hỏi!");
+        return "redirect:/exams/" + id;
+    }
+    @Autowired
     private ExamService examService;
 
     @Autowired

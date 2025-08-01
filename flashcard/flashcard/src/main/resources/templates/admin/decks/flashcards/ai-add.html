@@ -20,7 +20,7 @@
             <input type="number" name="count" class="form-control" value="5" min="1" max="50">
         </div>
         <button type="submit" class="btn btn-primary">Tạo flashcard bằng AI</button>
-        <a th:href="@{'/admin/decks/view/' + ${deckId}}" class="btn btn-secondary ms-2">Quay lại</a>
+        <a th:href="@{'/admin/decks/view/' + ${deck.id}}" class="btn btn-secondary ms-2">Quay lại</a>
     </form>
 </div>
 </body>

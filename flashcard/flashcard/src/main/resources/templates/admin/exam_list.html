@@ -136,7 +136,9 @@
                 <div class="card-header bg-primary text-white text-center fs-5">Quản lý Đề thi (Exam) - Admin</div>
                 <div class="card-body">
                     <div class="mb-3 text-end">
-                        <a href="/admin/exams/create" class="btn btn-success">Thêm đề thi mới</a>
+                        <a href="/exams/create" class="btn btn-success">
+                            <i class="bi bi-plus-circle me-1"></i> Thêm đề thi mới
+                        </a>
                     </div>
                     <table class="table table-bordered table-hover align-middle">
                         <thead class="table-light">
@@ -145,31 +147,31 @@
                             <th>Tiêu đề</th>
                             <th>Mã đề</th>
                             <th>Người tạo</th>
-                            <th>Thời lượng (phút)</th>
-                            <th>Số câu hỏi</th>
-                            <th>Công khai</th>
-                            <th>Hành động</th>
+                            <th><i class="bi bi-clock"></i> Thời lượng</th>
+                            <th><i class="bi bi-list-ol"></i> Số câu hỏi</th>
+                            <th><i class="bi bi-globe"></i> Công khai</th>
+                            <th><i class="bi bi-tools"></i> Hành động</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="exam : ${exams}">
                             <td th:text="${exam.id}"></td>
                             <td th:text="${exam.title}"></td>
-                            <td th:text="${exam.code}"></td>
+                            <td><span class="badge bg-info text-dark" th:text="${exam.code}"></span></td>
                             <td th:text="${exam.createdBy}"></td>
-                            <td th:text="${exam.duration}"></td>
-                            <td th:text="${exam.totalQuestions}"></td>
+                            <td><i class="bi bi-clock"></i> <span th:text="${exam.duration}"></span></td>
+                            <td><i class="bi bi-list-ol"></i> <span th:text="${exam.totalQuestions}"></span></td>
                             <td>
-                                <span th:if="${exam.public}" class="badge bg-success">Công khai</span>
-                                <span th:if="${!exam.public}" class="badge bg-secondary">Riêng tư</span>
+                                <span th:if="${exam.public}" class="badge bg-success"><i class="bi bi-unlock"></i> Công khai</span>
+                                <span th:if="${!exam.public}" class="badge bg-secondary"><i class="bi bi-lock"></i> Riêng tư</span>
                             </td>
                             <td>
-                                <a th:href="@{'/admin/exams/edit/' + ${exam.id}}" class="btn btn-sm btn-primary">Sửa</a>
+                                <a th:href="@{'/admin/exams/edit/' + ${exam.id}}" class="btn btn-sm btn-primary me-1"><i class="bi bi-pencil-square"></i> Sửa</a>
                                 <form th:action="@{'/api/admin/exams/' + ${exam.id}}" method="post" style="display:inline-block" onsubmit="return confirm('Bạn chắc chắn muốn xóa đề này?');">
                                     <input type="hidden" name="_method" value="delete" />
-                                    <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                                    <button type="submit" class="btn btn-sm btn-danger me-1"><i class="bi bi-trash"></i> Xóa</button>
                                 </form>
-                                <a th:href="@{'/exams/' + ${exam.id}}" class="btn btn-sm btn-info" target="_blank">Xem</a>
+                                <a th:href="@{'/exams/' + ${exam.id}}" class="btn btn-sm btn-info" target="_blank"><i class="bi bi-eye"></i> Xem</a>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(exams)}">
