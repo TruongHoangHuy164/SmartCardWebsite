@@ -1,3 +1,4 @@
+
 package com.quizletclone.flashcard.controller.Admin;
 
 import com.quizletclone.flashcard.service.FlashcardService;
@@ -28,6 +29,26 @@ public class FlashcardAdminController {
 
     @Autowired
     private DeckService deckService;
+
+    @PostMapping("/admin/flashcards/multi-delete")
+    public String multiDeleteFlashcards(@RequestParam("ids") Integer[] ids, HttpSession session) {
+        if (!isAdmin(session))
+            return "error/404";
+        Integer deckId = null;
+        for (Integer id : ids) {
+            var flashcardOpt = flashcardService.getFlashcardById(id);
+            if (flashcardOpt.isPresent()) {
+                if (deckId == null) {
+                    deckId = flashcardOpt.get().getDeck().getId();
+                }
+                flashcardService.deleteFlashcard(id);
+            }
+        }
+        if (deckId == null) {
+            return "redirect:/admin/decks";
+        }
+        return "redirect:/admin/decks/view/" + deckId;
+    }
 
     @GetMapping("/admin/flashcards")
     public String manageFlashcards(Model model, HttpSession session) {
