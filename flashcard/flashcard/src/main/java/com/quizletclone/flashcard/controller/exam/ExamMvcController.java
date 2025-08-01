@@ -1,12 +1,10 @@
 package com.quizletclone.flashcard.controller.exam;
 
-import com.quizletclone.flashcard.model.exam.Exam;
-import com.quizletclone.flashcard.service.exam.ExamService;
-import com.quizletclone.flashcard.model.User;
-import com.quizletclone.flashcard.service.exam.ExamQuestionService;
-import com.quizletclone.flashcard.service.exam.ExamExportService;
-import com.quizletclone.flashcard.repository.exam.ExamAttemptRepository;
-import jakarta.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -14,14 +12,24 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.List;
+
+import com.quizletclone.flashcard.model.User;
+import com.quizletclone.flashcard.model.exam.Exam;
 import com.quizletclone.flashcard.model.exam.ExamAttempt;
+import com.quizletclone.flashcard.repository.exam.ExamAttemptRepository;
+import com.quizletclone.flashcard.service.exam.ExamExportService;
+import com.quizletclone.flashcard.service.exam.ExamQuestionService;
+import com.quizletclone.flashcard.service.exam.ExamService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/exams")
@@ -32,9 +40,11 @@ public class ExamMvcController {
     private com.quizletclone.flashcard.service.exam.ExamOptionService examOptionService;
 
     @PostMapping("/{id}/ai-import")
-    public String aiImportExam(@PathVariable Long id, @RequestParam("file") org.springframework.web.multipart.MultipartFile file,
-                               HttpSession session, RedirectAttributes redirectAttributes) {
-        com.quizletclone.flashcard.model.User user = (com.quizletclone.flashcard.model.User) session.getAttribute("loggedInUser");
+    public String aiImportExam(@PathVariable Long id,
+            @RequestParam("file") org.springframework.web.multipart.MultipartFile file,
+            HttpSession session, RedirectAttributes redirectAttributes) {
+        com.quizletclone.flashcard.model.User user = (com.quizletclone.flashcard.model.User) session
+                .getAttribute("loggedInUser");
         java.util.Optional<com.quizletclone.flashcard.model.exam.Exam> examOpt = examService.getExamById(id);
         if (examOpt.isEmpty() || user == null || !examOpt.get().getCreatedBy().equals(user.getUsername())) {
             redirectAttributes.addFlashAttribute("error", "Bạn không có quyền import đề này!");
@@ -44,12 +54,14 @@ public class ExamMvcController {
         try {
             String filename = file.getOriginalFilename().toLowerCase();
             if (filename.endsWith(".pdf")) {
-                try (org.apache.pdfbox.pdmodel.PDDocument document = org.apache.pdfbox.pdmodel.PDDocument.load(file.getInputStream())) {
+                try (org.apache.pdfbox.pdmodel.PDDocument document = org.apache.pdfbox.pdmodel.PDDocument
+                        .load(file.getInputStream())) {
                     org.apache.pdfbox.text.PDFTextStripper stripper = new org.apache.pdfbox.text.PDFTextStripper();
                     text = stripper.getText(document);
                 }
             } else if (filename.endsWith(".doc") || filename.endsWith(".docx")) {
-                org.apache.poi.xwpf.usermodel.XWPFDocument doc = new org.apache.poi.xwpf.usermodel.XWPFDocument(file.getInputStream());
+                org.apache.poi.xwpf.usermodel.XWPFDocument doc = new org.apache.poi.xwpf.usermodel.XWPFDocument(
+                        file.getInputStream());
                 StringBuilder sb = new StringBuilder();
                 for (org.apache.poi.xwpf.usermodel.XWPFParagraph p : doc.getParagraphs()) {
                     sb.append(p.getText()).append("\n");
@@ -65,7 +77,8 @@ public class ExamMvcController {
         }
         var questions = aiService.analyzeExamQuestions(text);
         if (questions.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "AI không phân tích được đề thi hoặc file không đúng định dạng!");
+            redirectAttributes.addFlashAttribute("error",
+                    "AI không phân tích được đề thi hoặc file không đúng định dạng!");
             return "redirect:/exams/" + id;
         }
         com.quizletclone.flashcard.model.exam.Exam exam = examOpt.get();
@@ -87,14 +100,15 @@ public class ExamMvcController {
         redirectAttributes.addFlashAttribute("success", "Đã import thành công " + questions.size() + " câu hỏi!");
         return "redirect:/exams/" + id;
     }
+
     @Autowired
     private ExamService examService;
 
     @Autowired
     private ExamQuestionService examQuestionService;
 
-     @Autowired
-     private ExamExportService examExportService;
+    @Autowired
+    private ExamExportService examExportService;
 
     @Autowired
     private ExamAttemptRepository examAttemptRepository;
@@ -248,8 +262,16 @@ public class ExamMvcController {
         // Lấy danh sách attempts cho exam này
         List<ExamAttempt> attempts = examAttemptRepository.findByExam_IdOrderBySubmittedAtDesc(exam.getId());
 
+        // Tính toán thống kê
+        double averageScore = calculateAverageScore(attempts);
+        double averageCorrect = calculateAverageCorrect(attempts);
+        double averagePercentage = calculateAveragePercentage(attempts, exam.getTotalQuestions());
+
         model.addAttribute("exam", exam);
         model.addAttribute("attempts", attempts);
+        model.addAttribute("averageScore", averageScore);
+        model.addAttribute("averageCorrect", averageCorrect);
+        model.addAttribute("averagePercentage", averagePercentage);
         return "exam/attempt_history";
     }
 

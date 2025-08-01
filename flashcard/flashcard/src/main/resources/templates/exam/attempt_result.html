@@ -1,120 +1,63 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="~{layout/layout}">
-
+      layout:decorate="~{layout/layout}">
 <head>
     <title>Kết quả làm bài</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body,
-        .quizlet-result,
-        .quizlet-result * {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-        }
-
-        .quizlet-result {
-            max-width: 700px;
-            margin: 40px auto;
-            background: #fff;
-            border-radius: 28px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
-            padding: 48px 48px 36px 48px;
-        }
-
-        .quizlet-result h2 {
-            color: #222;
-            font-weight: 700;
-            letter-spacing: -1px;
-            margin-bottom: 18px;
-        }
-
-        .quizlet-result .score {
-            font-size: 32px;
-            color: #0071e3;
-            font-weight: 700;
-            margin-bottom: 18px;
-        }
-
-        .quizlet-result .summary {
-            font-size: 18px;
-            color: #555;
-            margin-bottom: 24px;
-        }
-
-        .quizlet-result table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 12px;
-            margin-top: 32px;
-        }
-
-        .quizlet-result th,
-        .quizlet-result td {
-            background: #fff;
-            border: none;
-            padding: 18px 16px;
-            border-radius: 14px;
-            font-size: 16px;
-        }
-
-        .quizlet-result th {
-            background: #fff;
-            color: #888;
-            font-weight: 600;
-            font-size: 15px;
-            letter-spacing: 0.5px;
-        }
-
-        .quizlet-result .btn {
-            border-radius: 22px !important;
-            font-size: 15px;
-            font-weight: 600;
-            padding: 10px 28px;
-            background: #0071e3;
-            color: #fff;
-            border: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            transition: background 0.2s, box-shadow 0.2s;
-        }
-
-        /* Không có hiệu ứng hover cho bảng */
-    </style>
 </head>
 
 <body>
-    <div layout:fragment="content">
-        <div class="quizlet-result">
-            <h2>Kết quả làm bài</h2>
-            <div class="score mb-3">
+<div layout:fragment="content">
+    <div class="container py-5">
+        <div class="card shadow-lg rounded-4 p-4 mx-auto" style="max-width: 720px;">
+            <h2 class="fw-bold text-dark mb-3">Kết quả làm bài</h2>
+
+            <div class="fs-5 text-primary fw-semibold mb-3">
                 Số điểm: <span th:text="${correctCount}"></span> / <span th:text="${total}"></span>
                 (<span th:text="${total > 0 ? T(java.lang.Math).round((correctCount * 100.0) / total) : 0}"></span>%)
                 &nbsp;|&nbsp;
-                Số câu đúng: <span th:text="${correctCount}"></span>
+                Đúng: <span th:text="${correctCount}"></span>
                 &nbsp;|&nbsp;
-                Số câu sai: <span
-                    th:text="${(total != null ? total : 0) - (correctCount != null ? correctCount : 0)}"></span>
+                Sai: <span th:text="${(total != null ? total : 0) - (correctCount != null ? correctCount : 0)}"></span>
             </div>
-            <table class="table table-hover align-middle">
 
-                <tbody>
-                    <tr th:each="result,iter : ${results}">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center">
+                    <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Câu hỏi</th>
+                        <th>Đáp án chọn</th>
+                        <th>Đáp án đúng</th>
+                        <th>Kết quả</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="result, iter : ${results}">
                         <td th:text="${iter.index + 1}"></td>
                         <td th:text="${result.question.content}"></td>
                         <td th:text="${result.selectedOption.content}"></td>
                         <td th:text="${result.correctOption.content}"></td>
-                        <td th:text="${result.isCorrect ? 'Đúng' : 'Sai'}"
-                            th:classappend="${result.isCorrect} ? 'correct' : 'wrong'"></td>
+                        <td>
+                            <span th:text="${result.isCorrect ? 'Đúng' : 'Sai'}"
+                                  th:classappend="${result.isCorrect ? 'text-success fw-bold' : 'text-danger fw-bold'}">
+                            </span>
+                        </td>
                     </tr>
-                </tbody>
-            </table>
-            <div style="margin-top:24px;">
-                <a th:href="@{/exams}" class="btn btn-secondary">Quay lại danh sách đề thi</a>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 text-end">
+                <a th:href="@{/exams}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left"></i> Quay lại danh sách đề thi
+                </a>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
