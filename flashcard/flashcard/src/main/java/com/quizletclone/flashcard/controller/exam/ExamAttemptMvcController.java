@@ -1,20 +1,26 @@
 package com.quizletclone.flashcard.controller.exam;
 
-import com.quizletclone.flashcard.model.exam.Exam;
-import com.quizletclone.flashcard.model.exam.ExamAttempt;
-import com.quizletclone.flashcard.service.exam.ExamAttemptService;
-import com.quizletclone.flashcard.service.exam.ExamService;
-import com.quizletclone.flashcard.service.exam.ExamAttemptAnswerService;
-import com.quizletclone.flashcard.model.User;
-import jakarta.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.HashMap;
+import com.quizletclone.flashcard.model.User;
+import com.quizletclone.flashcard.model.exam.Exam;
+import com.quizletclone.flashcard.model.exam.ExamAttempt;
+import com.quizletclone.flashcard.service.exam.ExamAttemptAnswerService;
+import com.quizletclone.flashcard.service.exam.ExamAttemptService;
+import com.quizletclone.flashcard.service.exam.ExamService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/exams/attempt")
