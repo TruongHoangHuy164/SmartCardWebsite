@@ -41,4 +41,7 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
+
+    @Column(name = "failed_login_attempts")
+    private Integer failedLoginAttempts = 0;
 }

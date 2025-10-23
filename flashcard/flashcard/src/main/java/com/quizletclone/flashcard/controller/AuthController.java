@@ -62,7 +62,7 @@ public class AuthController {
             userService.saveUser(user);
             session.setAttribute("loggedInUser", user);
             redirectAttributes.addFlashAttribute("success", "Đăng ký thành công!");
-            return "redirect:/signup";
+            return "redirect:/login";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi đăng ký: " + e.getMessage());
             return "redirect:/signup";
@@ -100,6 +100,9 @@ public class AuthController {
                 }
 
                 if (user.getPassword().equals(password)) {
+                    // Đăng nhập đúng: reset số lần sai
+                    user.setFailedLoginAttempts(0);
+                    userService.saveUser(user);
                     session.setAttribute("loggedInUser", user); // Lưu session
                     // Đánh dấu user online
                     OnlineUserSessionListener.addOnlineUser(user.getId());
@@ -110,7 +113,20 @@ public class AuthController {
                         return redirectWithMessage("/", redirectAttributes, "success", "Đăng nhập thành công!");
                     }
                 } else {
-                    model.addAttribute("error", "Mật khẩu không đúng!");
+                    // Đăng nhập sai: tăng số lần sai
+                    int failed = user.getFailedLoginAttempts() == null ? 0 : user.getFailedLoginAttempts();
+                    failed++;
+                    user.setFailedLoginAttempts(failed);
+                    // Nếu sai >= 3 lần thì khóa tài khoản
+                    if (failed >= 3) {
+                        user.setEnabled(false);
+                        userService.saveUser(user);
+                        model.addAttribute("error", "Bạn đã nhập sai 3 lần. Tài khoản đã bị khóa!");
+                        return "login/login";
+                    } else {
+                        userService.saveUser(user);
+                        model.addAttribute("error", "Mật khẩu không đúng! Bạn còn " + (3 - failed) + " lần thử.");
+                    }
                 }
             } else {
                 model.addAttribute("error", "Tên đăng nhập không tồn tại!");
