@@ -96,4 +96,29 @@ class DeckRepositoryTest {
         assertThat(result).isNotEmpty();
         assertThat(result).allMatch(Deck::getIsPublic);
     }
+
+    @Test
+    void findAllByIsPublicFalse_shouldReturnOnlyPrivateDecks() {
+        var result = deckRepository.findAllByIsPublicFalse();
+        assertThat(result).isNotEmpty();
+        assertThat(result).allMatch(deck -> !deck.getIsPublic());
+    }
+
+        @Test
+    void update_shouldPersistChanges() {
+        var deck = deckRepository.findById(publicDeckId).orElseThrow();
+        deck.setTitle("Java Basics - Updated");
+        deckRepository.saveAndFlush(deck);
+
+        tem.clear();
+        var reloaded = deckRepository.findById(publicDeckId).orElseThrow();
+        assertThat(reloaded.getTitle()).isEqualTo("Java Basics - Updated");
+    }
+
+        @Test
+    void findAllBySubject_shouldReturnOnlyMatchingSubject() {
+        var result = deckRepository.findAllBySubject("Java");
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getTitle()).isEqualTo("Java Basics");
+    }
 }

@@ -26,6 +26,13 @@ public class AuthController {
     @GetMapping("/signup")
     public String showRegisterForm(Model model) {
         model.addAttribute("user", new User());
+        // Truyền thông báo nếu có
+        if (model.containsAttribute("success")) {
+            model.addAttribute("success", model.getAttribute("success"));
+        }
+        if (model.containsAttribute("error")) {
+            model.addAttribute("error", model.getAttribute("error"));
+        }
         return "login/signup";
     }
 
@@ -34,19 +41,19 @@ public class AuthController {
             Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         try {
             if (userService.findByUsername(user.getUsername()).isPresent()) {
-                model.addAttribute("error", "Tên đăng nhập đã tồn tại!");
-                return "login/signup";
+                redirectAttributes.addFlashAttribute("error", "Tên đăng nhập đã tồn tại!");
+                return "redirect:/signup";
             }
 
             if (userService.findByEmail(user.getEmail()).isPresent()) {
-                model.addAttribute("error", "Email đã tồn tại!");
-                return "login/signup";
+                redirectAttributes.addFlashAttribute("error", "Email đã tồn tại!");
+                return "redirect:/signup";
             }
 
             // Kiểm tra xác nhận mật khẩu
             if (confirmPassword == null || !user.getPassword().equals(confirmPassword)) {
-                model.addAttribute("error", "Mật khẩu xác nhận không khớp!");
-                return "login/signup";
+                redirectAttributes.addFlashAttribute("error", "Mật khẩu xác nhận không khớp!");
+                return "redirect:/signup";
             }
 
             userService.saveUserWithRole(user, "USER");
@@ -54,10 +61,11 @@ public class AuthController {
             user.setCreatedAt(new java.util.Date());
             userService.saveUser(user);
             session.setAttribute("loggedInUser", user);
-            return redirectWithMessage("/", redirectAttributes, "success", "Đăng ký và đăng nhập thành công!");
+            redirectAttributes.addFlashAttribute("success", "Đăng ký thành công!");
+            return "redirect:/signup";
         } catch (Exception e) {
-            model.addAttribute("error", "Có lỗi xảy ra khi đăng ký: " + e.getMessage());
-            return "login/signup";
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi đăng ký: " + e.getMessage());
+            return "redirect:/signup";
         }
     }
 

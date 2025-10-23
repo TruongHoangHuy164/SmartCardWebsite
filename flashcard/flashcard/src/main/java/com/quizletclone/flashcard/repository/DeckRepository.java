@@ -27,6 +27,10 @@ public interface DeckRepository extends JpaRepository<Deck, Integer> {
 
     List<Deck> findAllByIsPublicTrue();
 
+    List<Deck> findAllByIsPublicFalse();
+
+    List<Deck> findAllBySubject(String subject);
+
     @org.springframework.data.jpa.repository.Query(value = "SELECT COUNT(*) FROM decks WHERE MONTH(created_at) = :month AND YEAR(created_at) = :year", nativeQuery = true)
     int countDecksByMonthAndYear(@org.springframework.data.repository.query.Param("month") int month,
             @org.springframework.data.repository.query.Param("year") int year);

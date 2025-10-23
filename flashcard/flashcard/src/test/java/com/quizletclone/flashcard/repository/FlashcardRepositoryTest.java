@@ -89,4 +89,36 @@ class FlashcardRepositoryTest {
         var page = flashcardRepository.searchByKeyword("java", PageRequest.of(0, 10));
         assertThat(page.getTotalElements()).isEqualTo(2);
     }
+
+    @Test
+    void save_shouldAssignId_andLinkToDeck() {
+        var deck = deckRepository.findById(deckId).orElseThrow();
+
+        Flashcard c = new Flashcard();
+        c.setDeck(deck);
+        c.setTerm("JRE");
+        c.setDefinition("Java Runtime Environment");
+        c.setCreatedAt(new Date());
+
+        var saved = flashcardRepository.save(c);
+        assertThat(saved.getId()).isNotNull();
+
+        var cards = flashcardRepository.findAllByDeckId(deckId);
+        assertThat(cards).extracting(Flashcard::getTerm).contains("JRE");
+    }
+
+    @Test
+    void searchByKeyword_shouldBeCaseInsensitive_andMatchDefinition() {
+        // "VIRTUAL" khớp phần definition "Java Virtual Machine" của thẻ JVM
+        var page = flashcardRepository.searchByKeyword("VIRTUAL", PageRequest.of(0, 10));
+        assertThat(page.getTotalElements()).isEqualTo(1);
+        assertThat(page.getContent().get(0).getTerm()).isEqualTo("JVM");
+    }
+
+    @Test
+    void searchByKeyword_shouldReturnEmpty_whenNoMatch() {
+        var page = flashcardRepository.searchByKeyword("no-such-keyword", PageRequest.of(0, 10));
+        assertThat(page.getTotalElements()).isZero();
+        assertThat(page.getContent()).isEmpty();
+    }
 }
