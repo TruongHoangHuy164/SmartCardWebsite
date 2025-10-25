@@ -202,6 +202,12 @@ public class DeckViewController {
                 return redirectWithMessage("/login", redirectAttributes, "error", "Vui lòng đăng nhập để tạo bộ thẻ.");
             }
 
+            // giới hạn tên deck không quá 30 kí tự
+            if (deck.getTitle().length() > 30) {
+                return redirectWithMessage("/decks/create", redirectAttributes, "error",
+                        "Tiêu đề bộ thẻ không được vượt quá 30 ký tự.");
+            }
+
             if (deck.getIsPublic() == null) {
                 deck.setIsPublic(false);
             }

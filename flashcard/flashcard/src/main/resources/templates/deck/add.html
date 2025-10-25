@@ -81,6 +81,21 @@
                             </a>
                         </div>
                     </form>
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script>
+                document.querySelector('form').addEventListener('submit', function(e) {
+                    var title = document.getElementById('title').value.trim();
+                    if (title.length > 30) {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Tên bộ thẻ quá dài',
+                            text: 'Tên bộ thẻ chỉ được tối đa 30 ký tự!'
+                        });
+                        return false;
+                    }
+                });
+                </script>
                 </div>
             </div>
         </div>

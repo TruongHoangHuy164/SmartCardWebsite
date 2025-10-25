@@ -88,6 +88,17 @@ public class AuthController {
             Model model,
             HttpSession session, RedirectAttributes redirectAttributes) {
         try {
+            // Kiểm tra username có nhập ko
+            if (username == null || username.isEmpty()) {
+                model.addAttribute("error", "Vui lòng nhập tên đăng nhập!");
+                return "login/login";
+            }
+            // Kiểm tra password có nhập ko
+            if (password == null || password.isEmpty()) {
+                model.addAttribute("error", "Vui lòng nhập mật khẩu!");
+                return "login/login";
+            }
+
             var userOpt = userService.findByUsername(username);
 
             if (userOpt.isPresent()) {
