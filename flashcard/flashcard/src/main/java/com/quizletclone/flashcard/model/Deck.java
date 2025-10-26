@@ -29,7 +29,7 @@ public class Deck {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Column(columnDefinition = "NVARCHAR(30)")
     private String title;
 
     @Column(columnDefinition = "NVARCHAR(MAX)")

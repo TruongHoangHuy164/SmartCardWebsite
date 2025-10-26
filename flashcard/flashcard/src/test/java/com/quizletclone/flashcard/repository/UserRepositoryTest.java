@@ -1,6 +1,7 @@
 package com.quizletclone.flashcard.repository;
 
 import com.quizletclone.flashcard.model.User;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,18 @@ class UserRepositoryTest {
     RoleRepository roleRepository;
     @Autowired
     TestEntityManager tem;
+    @Autowired
+    EntityManager em;
 
+    // Dọn DB theo thứ tự phụ thuộc để tránh FK (không sửa model)
     private void cleanup() {
-        userRepository.deleteAllInBatch();
-        roleRepository.deleteAllInBatch();
+        tem.flush();
+        em.createNativeQuery("DELETE FROM quizzes").executeUpdate();
+        em.createNativeQuery("DELETE FROM flashcards").executeUpdate();
+        em.createNativeQuery("DELETE FROM decks").executeUpdate();
+        em.createNativeQuery("DELETE FROM users").executeUpdate();
+        em.createNativeQuery("DELETE FROM roles").executeUpdate();
+        tem.clear();
     }
 
     @BeforeEach
@@ -45,14 +54,16 @@ class UserRepositoryTest {
         return u;
     }
 
+    // ======= 3 TEST PASS =======
+
     @Test
-    void save_and_findById_shouldWork() {
+    void save_and_findById_shouldWork_PASS() {
         User saved = userRepository.save(mkUser("alice", "alice@example.com"));
         assertThat(userRepository.findById(saved.getId())).isPresent();
     }
 
     @Test
-    void update_shouldPersistChanges() {
+    void update_shouldPersistChanges_PASS() {
         User saved = userRepository.save(mkUser("bob", "bob@example.com"));
         saved.setEnabled(false);
         userRepository.saveAndFlush(saved);
@@ -62,21 +73,32 @@ class UserRepositoryTest {
     }
 
     @Test
-    void findAll_shouldReturn() {
+    void findById_whenNotExists_shouldBeEmpty_PASS() {
+        assertThat(userRepository.findById(-1)).isEmpty(); // id là Integer
+    }
+
+    // ======= 3 TEST FAIL (CỐ Ý) =======
+
+    @Test
+    void wrongEmailExpectation_FAIL() {
+        User saved = userRepository.save(mkUser("wrong", "wrong@example.com"));
+        // Cố tình sai: mong đợi email khác
+        assertThat(saved.getEmail()).isEqualTo("not_the_same@example.com");
+    }
+
+    @Test
+    void findAll_countTooHighExpectation_FAIL() {
         userRepository.save(mkUser("c1", "c1@example.com"));
         userRepository.save(mkUser("c2", "c2@example.com"));
-        assertThat(userRepository.findAll().size()).isGreaterThanOrEqualTo(2);
+        // Cố tình sai: đòi >= 3 trong khi chỉ có 2
+        assertThat(userRepository.findAll().size()).isGreaterThanOrEqualTo(3);
     }
 
     @Test
-    void deleteById_shouldRemove() {
-        User saved = userRepository.save(mkUser("del", "del@example.com"));
+    void delete_then_expectStillPresent_FAIL() {
+        User saved = userRepository.save(mkUser("toDel", "toDel@example.com"));
         userRepository.deleteById(saved.getId());
-        assertThat(userRepository.findById(saved.getId())).isEmpty();
-    }
-
-    @Test
-    void findById_whenNotExists_shouldBeEmpty() {
-        assertThat(userRepository.findById(-1)).isEmpty();
+        // Cố tình sai: mong đợi vẫn còn
+        assertThat(userRepository.findById(saved.getId())).isPresent();
     }
 }
